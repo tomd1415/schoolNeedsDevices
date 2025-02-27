@@ -1,0 +1,18 @@
+project/
+ ├── server/
+ │    ├── index.js
+ │    ├── config/
+ │    │      └── db.js
+ │    ├── models/
+ │    │      └── pupilModel.js
+ │    ├── controllers/
+ │    │      ├── pupilController.js
+ │    │      └── uploadController.js
+ │    └── routes/
+ │           └── pupils.js
+ └── public/
+      ├── pupils.html
+      ├── css/
+      │      └── pupils.css
+      └── js/
+             └── pupils.js
