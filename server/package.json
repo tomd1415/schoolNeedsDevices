@@ -1,0 +1,26 @@
+{
+  "name": "schoolneedsdevices",
+  "version": "1.0.0",
+  "description": "School Needs and Devices matched up",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomd1415/schoolNeedsDevices.git"
+  },
+  "author": "Tom Duguid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomd1415/schoolNeedsDevices/issues"
+  },
+  "homepage": "https://github.com/tomd1415/schoolNeedsDevices#readme",
+  "dependencies": {
+    "csv-parser": "^3.2.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.3"
+  }
+}
