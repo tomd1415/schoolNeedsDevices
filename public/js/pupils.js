@@ -3,6 +3,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const csvUploadForm = document.getElementById('csvUploadForm');
   const pupilTableBody = document.querySelector('#pupilTable tbody');
   const uploadMessageDiv = document.getElementById('uploadMessage');
+  const formSelect = document.getElementById('form_id');
+  
+  // Store forms data to use for display
+  let formsData = [];
+
+  // Load forms from the server
+  const loadForms = async () => {
+    try {
+      const response = await fetch('/api/forms');
+      formsData = await response.json();
+      formSelect.innerHTML = '<option value="">Select a form</option>';
+      formsData.forEach(form => {
+        const option = document.createElement('option');
+        option.value = form.form_id;
+        option.textContent = form.form_name;
+        formSelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error loading forms:', error);
+    }
+  };
+
+  // Get form name by id
+  const getFormNameById = (formId) => {
+    const form = formsData.find(f => f.form_id == formId);
+    return form ? form.form_name : formId;
+  };
 
   // Load pupils from the server
   const loadPupils = async () => {
@@ -16,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${pupil.pupil_id}</td>
           <td>${pupil.first_name}</td>
           <td>${pupil.last_name}</td>
-          <td>${pupil.form_id}</td>
+          <td>${getFormNameById(pupil.form_id)}</td>
           <td>${pupil.notes || ''}</td>
           <td>
             <button class="editBtn" data-id="${pupil.pupil_id}">Edit</button>
@@ -30,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Initialize by loading forms and pupils
+  loadForms();
   loadPupils();
 
   // Handle add/edit pupil form submission

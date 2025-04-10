@@ -20,8 +20,8 @@ const addPupil = async (first_name, last_name, form_id, notes) => {
 
 const updatePupil = async (id, first_name, last_name, form_id, notes) => {
   const result = await pool.query(
-    'UPDATE pupil SET first_name = $1, last_name = $2, form_id = $3, notes = $4 WHERE pupil_id = $5 RETURNING *',
-    [first_name, last_name, form_id, notes, id]
+    'UPDATE pupil SET first_name = $2, last_name = $3, form_id = $4, notes = $5 WHERE pupil_id = $1 RETURNING *',
+    [id, first_name, last_name, form_id, notes]
   );
   return result.rows[0];
 };

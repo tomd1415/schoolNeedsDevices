@@ -34,8 +34,11 @@
           <input type="text" id="last_name" name="last_name" required>
         </div>
         <div>
-          <label for="form_id">Form Group (ID):</label>
-          <input type="number" id="form_id" name="form_id" required>
+          <label for="form_id">Form Group:</label>
+          <select id="form_id" name="form_id" required>
+            <option value="">Select a form</option>
+            <!-- Options will be populated dynamically -->
+          </select>
         </div>
         <div>
           <label for="notes">Notes:</label>
