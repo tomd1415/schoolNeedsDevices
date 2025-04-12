@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assign Devices to Needs - Exhall Grange School</title>
+  <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+  <header>
+    <h1>Assign Devices to Needs</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="pupils.html">Pupils</a></li>
+      <li><a href="forms.html">Forms</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="needs.html">Needs</a></li>
+      <li><a href="devices.html">Devices</a></li>
+      <li><a href="pupil-needs.html">Assign Needs</a></li>
+      <li><a href="need-devices.html">Assign Devices</a></li>
+    </ul>
+  </nav>
+  <main>
+    <!-- Select Pupil Section -->
+    <section id="select-pupil-section" class="form-section">
+      <h2>Select Pupil</h2>
+      <div>
+        <label for="pupil_id">Pupil:</label>
+        <select id="pupil_id" name="pupil_id">
+          <option value="">Select a pupil</option>
+          <!-- Options will be populated dynamically -->
+        </select>
+      </div>
+    </section>
+
+    <!-- Select Need Section -->
+    <section id="select-need-section" class="form-section" style="display: none;">
+      <h2>Select Need</h2>
+      <div>
+        <label for="need_id">Need:</label>
+        <select id="need_id" name="need_id">
+          <option value="">Select a need</option>
+          <!-- Options will be populated dynamically -->
+        </select>
+      </div>
+      <div id="need-details" style="display: none;">
+        <p><strong>Need:</strong> <span id="need-name"></span></p>
+        <p><strong>Category:</strong> <span id="need-category"></span></p>
+        <p><strong>Description:</strong> <span id="need-description"></span></p>
+      </div>
+    </section>
+
+    <!-- Assign Device Section -->
+    <section id="assign-device-section" class="form-section" style="display: none;">
+      <h2>Assign Device</h2>
+      <form id="assignDeviceForm">
+        <div>
+          <label for="device_id">Device:</label>
+          <select id="device_id" name="device_id" required>
+            <option value="">Select a device</option>
+            <!-- Options will be populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <label for="assignment_date">Assignment Date:</label>
+          <input type="date" id="assignment_date" name="assignment_date" required>
+        </div>
+        <div>
+          <label for="notes">Notes:</label>
+          <textarea id="notes" name="notes"></textarea>
+        </div>
+        <button type="submit" id="assignDeviceBtn">Assign Device</button>
+      </form>
+    </section>
+
+    <!-- Assigned Devices Section -->
+    <section id="assigned-devices-section" class="list-section" style="display: none;">
+      <h2>Assigned Devices</h2>
+      <table id="assignedDevicesTable">
+        <thead>
+          <tr>
+            <th>Device Name</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Assignment Date</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamically filled with device data -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <script src="js/need-devices.js"></script>
+</body>
+</html> 

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Device Management - Exhall Grange School</title>
+  <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+  <header>
+    <h1>Device Management</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="pupils.html">Pupils</a></li>
+      <li><a href="forms.html">Forms</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="needs.html">Needs</a></li>
+      <li><a href="devices.html">Devices</a></li>
+      <li><a href="pupil-needs.html">Assign Needs</a></li>
+      <li><a href="need-devices.html">Assign Devices</a></li>
+    </ul>
+  </nav>
+  <main>
+    <!-- Add/Edit Device Section -->
+    <section id="device-form-section" class="form-section">
+      <h2>Add/Edit Device</h2>
+      <form id="deviceForm">
+        <input type="hidden" id="device_id" name="device_id" value="">
+        <div>
+          <label for="device_name">Device Name:</label>
+          <input type="text" id="device_name" name="device_name" required>
+        </div>
+        <div>
+          <label for="model">Model:</label>
+          <input type="text" id="model" name="model">
+        </div>
+        <div>
+          <label for="serial_number">Serial Number:</label>
+          <input type="text" id="serial_number" name="serial_number">
+        </div>
+        <div>
+          <label for="purchase_date">Purchase Date:</label>
+          <input type="date" id="purchase_date" name="purchase_date">
+        </div>
+        <div>
+          <label for="warranty_info">Warranty Information:</label>
+          <input type="text" id="warranty_info" name="warranty_info">
+        </div>
+        <div>
+          <label for="status">Status:</label>
+          <select id="status" name="status">
+            <option value="available">Available</option>
+            <option value="in_use">In Use</option>
+            <option value="repair">Under Repair</option>
+            <option value="retired">Retired</option>
+          </select>
+        </div>
+        <div>
+          <label for="category_id">Category:</label>
+          <select id="category_id" name="category_id" required>
+            <option value="">Select a category</option>
+            <!-- Options will be populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <label for="notes">Notes:</label>
+          <textarea id="notes" name="notes"></textarea>
+        </div>
+        <button type="submit" id="saveDeviceBtn">Save Device</button>
+      </form>
+    </section>
+
+    <!-- List of Devices -->
+    <section id="device-list-section" class="list-section">
+      <h2>Device List</h2>
+      <table id="deviceTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Model</th>
+            <th>Serial</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamically filled with device data -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <script src="js/devices.js"></script>
+</body>
+</html> 

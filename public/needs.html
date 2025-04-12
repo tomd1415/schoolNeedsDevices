@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Need Management - Exhall Grange School</title>
+  <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+  <header>
+    <h1>Need Management</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="pupils.html">Pupils</a></li>
+      <li><a href="forms.html">Forms</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="needs.html">Needs</a></li>
+      <li><a href="devices.html">Devices</a></li>
+      <li><a href="pupil-needs.html">Assign Needs</a></li>
+      <li><a href="need-devices.html">Assign Devices</a></li>
+    </ul>
+  </nav>
+  <main>
+    <!-- Add/Edit Need Section -->
+    <section id="need-form-section" class="form-section">
+      <h2>Add/Edit Need</h2>
+      <form id="needForm">
+        <input type="hidden" id="need_id" name="need_id" value="">
+        <div>
+          <label for="need_name">Need Name:</label>
+          <input type="text" id="need_name" name="need_name" required>
+        </div>
+        <div>
+          <label for="category_id">Category:</label>
+          <select id="category_id" name="category_id" required>
+            <option value="">Select a category</option>
+            <!-- Options will be populated dynamically -->
+          </select>
+        </div>
+        <div>
+          <label for="description">Description:</label>
+          <textarea id="description" name="description"></textarea>
+        </div>
+        <button type="submit" id="saveNeedBtn">Save Need</button>
+      </form>
+    </section>
+
+    <!-- List of Needs -->
+    <section id="need-list-section" class="list-section">
+      <h2>Need List</h2>
+      <table id="needTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Need Name</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamically filled with need data -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <script src="js/needs.js"></script>
+</body>
+</html> 
