@@ -12,9 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${form.form_id}</td>
+          <td>${form.form_year}</td>
           <td>${form.form_name}</td>
           <td>${form.teacher_name || ''}</td>
-          <td>${form.description || ''}</td>
+          <td>${form.form_description || ''}</td>
           <td>
             <button class="editBtn" data-id="${form.form_id}">Edit</button>
             <button class="deleteBtn" data-id="${form.form_id}">Delete</button>
@@ -33,11 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
   formForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formId = document.getElementById('form_id').value;
+    const form_year = document.getElementById('form_year').value;
     const form_name = document.getElementById('form_name').value;
     const teacher_name = document.getElementById('teacher_name').value;
     const description = document.getElementById('description').value;
 
-    const formData = { form_name, teacher_name, description };
+    const formData = { form_year, form_name, teacher_name, description };
 
     try {
       if (formId) {
