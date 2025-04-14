@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tr.innerHTML = `
           <td>${category.category_id}</td>
           <td>${category.category_name}</td>
-          <td>${category.description || ''}</td>
+          <td>${category.category_description || ''}</td>
           <td>
             <button class="editBtn" data-id="${category.category_id}">Edit</button>
             <button class="deleteBtn" data-id="${category.category_id}">Delete</button>

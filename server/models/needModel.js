@@ -20,17 +20,17 @@ const getNeedById = async (id) => {
   return result.rows[0];
 };
 
-const addNeed = async (need_name, description, category_id) => {
+const addNeed = async (need_name, need_short_desc, need_long_desc, category_id) => {
   const result = await pool.query(
-    'INSERT INTO need (need_name, description, category_id) VALUES ($1, $2, $3) RETURNING *',
-    [need_name, description, category_id]
+    'INSERT INTO need (need_name, need_short_desc, need_long_desc, category_id) VALUES ($1, $2, $3, $4) RETURNING *',
+    [need_name, need_short_desc, need_long_desc, category_id]
   );
   return result.rows[0];
 };
 
-const updateNeed = async (id, need_name, description, category_id) => {
+const updateNeed = async (id, need_name, need_long_desc, need_short_desc, category_id) => {
   const result = await pool.query(
-    'UPDATE need SET need_name = $2, description = $3, category_id = $4 WHERE need_id = $1 RETURNING *',
+    'UPDATE need SET need_name = $2, need_short_desc = $3, need_long_desc = $4, category_id = $5 WHERE need_id = $1 RETURNING *',
     [id, need_name, description, category_id]
   );
   return result.rows[0];

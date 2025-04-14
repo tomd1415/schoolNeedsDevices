@@ -21,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Load needs from the server
-  const loadNeeds = async () => {
-    try {
+  const loadNeeds = async () => {    try {
       const response = await fetch('/api/needs');
       const needs = await response.json();
       needTableBody.innerHTML = '';
@@ -32,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${need.need_id}</td>
           <td>${need.need_name}</td>
           <td>${need.category_name || 'Uncategorized'}</td>
-          <td>${need.description || ''}</td>
+          <td>${need.need_short_desc || ''}</td>
+          <td>${need.need_long_desc || ''}</td>
           <td>
             <button class="editBtn" data-id="${need.need_id}">Edit</button>
             <button class="deleteBtn" data-id="${need.need_id}">Delete</button>
@@ -55,9 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const needId = document.getElementById('need_id').value;
     const need_name = document.getElementById('need_name').value;
     const category_id = document.getElementById('category_id').value;
-    const description = document.getElementById('description').value;
+    const need_long_desc = document.getElementById('description').value;
+    const need_short_desc = document.getElementById('short_description').value;
 
-    const needData = { need_name, category_id, description };
+    const needData = { need_name, category_id, need_short_desc, need_long_desc };
 
     try {
       if (needId) {
@@ -96,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('need_id').value = need.need_id;
           document.getElementById('need_name').value = need.need_name;
           document.getElementById('category_id').value = need.category_id || '';
-          document.getElementById('description').value = need.description || '';
+          document.getElementById('description').value = need.need_long_desc || '';
+          document.getElementById('need_short_desc').value = need.need_short_desc || '';
         }
       } catch (error) {
         console.error('Error fetching need for editing:', error);

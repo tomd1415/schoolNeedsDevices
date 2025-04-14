@@ -23,9 +23,9 @@ const getNeedById = async (req, res) => {
 };
 
 const createNeed = async (req, res) => {
-  const { need_name, description, category_id } = req.body;
+  const { need_name, need_short_desc, need_long_desc, category_id } = req.body;
   try {
-    const newNeed = await needModel.addNeed(need_name, description, category_id);
+    const newNeed = await needModel.addNeed(need_name, need_short_desc, need_long_desc, category_id);
     res.status(201).json(newNeed);
   } catch (err) {
     res.status(500).json({ error: err.message });
