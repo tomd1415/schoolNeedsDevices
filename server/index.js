@@ -7,6 +7,8 @@ const formRoutes = require('./routes/forms');
 const categoryRoutes = require('./routes/categories');
 const needRoutes = require('./routes/needs');
 const deviceRoutes = require('./routes/devices');
+const pupilCategoryRoutes = require('./routes/pupilCategoryRoutes');
+const categoryNeedRoutes = require('./routes/categoryNeedRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +26,8 @@ app.use('/api/forms', formRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/needs', needRoutes);
 app.use('/api/devices', deviceRoutes);
+app.use('/api/pupil-categories', pupilCategoryRoutes);
+app.use('/api/category-needs', categoryNeedRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

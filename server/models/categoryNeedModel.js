@@ -8,6 +8,14 @@ const getCategoryNeeds = async (categoryId) => {
   return result.rows;
 };
 
+const getNeedCategories = async (needId) => {
+  const result = await pool.query(
+    'SELECT c.* FROM category c JOIN category_need cn ON c.category_id = cn.category_id WHERE cn.need_id = $1',
+    [needId]
+  );
+  return result.rows;
+};
+
 const addNeedToCategory = async (categoryId, needId) => {
   const result = await pool.query(
     'INSERT INTO category_need (category_id, need_id) VALUES ($1, $2) RETURNING *',
@@ -25,6 +33,7 @@ const removeNeedFromCategory = async (categoryId, needId) => {
 
 module.exports = {
   getCategoryNeeds,
+  getNeedCategories,
   addNeedToCategory,
   removeNeedFromCategory
 };

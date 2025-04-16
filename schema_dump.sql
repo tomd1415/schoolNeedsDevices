@@ -28,7 +28,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public.category (
     category_id integer NOT NULL,
     category_name character varying(100) NOT NULL,
-    category_description text
+    description text
 );
 
 
@@ -57,20 +57,55 @@ ALTER SEQUENCE public.category_category_id_seq OWNED BY public.category.category
 
 
 --
+-- Name: category_need; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.category_need (
+    category_need_id integer NOT NULL,
+    category_id integer,
+    need_id integer
+);
+
+
+ALTER TABLE public.category_need OWNER TO postgres;
+
+--
+-- Name: category_need_category_need_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.category_need_category_need_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.category_need_category_need_id_seq OWNER TO postgres;
+
+--
+-- Name: category_need_category_need_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.category_need_category_need_id_seq OWNED BY public.category_need.category_need_id;
+
+
+--
 -- Name: device; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.device (
     device_id integer NOT NULL,
     image_link text,
-    device_name text,
-    device_model text,
-    device_serial_number text,
-    device_warranty_info text,
-    device_status text,
-    device_notes text,
-    device_purchase_date date,
-    device_category_id integer
+    name text,
+    model text,
+    serial_number text,
+    warranty_info text,
+    status text,
+    notes text,
+    purchase_date date,
+    category_id integer
 );
 
 
@@ -142,10 +177,9 @@ ALTER SEQUENCE public.form_form_id_seq OWNED BY public.form.form_id;
 
 CREATE TABLE public.need (
     need_id integer NOT NULL,
-    category_id integer NOT NULL,
-    need_name text,
-    need_short_desc text,
-    need_long_desc text
+    name text,
+    short_description text,
+    description text
 );
 
 
@@ -159,7 +193,8 @@ CREATE TABLE public.need_device (
     need_device_id integer NOT NULL,
     need_id integer NOT NULL,
     device_id integer NOT NULL,
-    note text
+    notes text,
+    assignment_date date DEFAULT CURRENT_DATE
 );
 
 
@@ -225,6 +260,41 @@ CREATE TABLE public.pupil (
 ALTER TABLE public.pupil OWNER TO postgres;
 
 --
+-- Name: pupil_category; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pupil_category (
+    pupil_category_id integer NOT NULL,
+    pupil_id integer,
+    category_id integer
+);
+
+
+ALTER TABLE public.pupil_category OWNER TO postgres;
+
+--
+-- Name: pupil_category_pupil_category_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pupil_category_pupil_category_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pupil_category_pupil_category_id_seq OWNER TO postgres;
+
+--
+-- Name: pupil_category_pupil_category_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pupil_category_pupil_category_id_seq OWNED BY public.pupil_category.pupil_category_id;
+
+
+--
 -- Name: pupil_device_alter; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -275,6 +345,43 @@ CREATE TABLE public.pupil_need (
 
 
 ALTER TABLE public.pupil_need OWNER TO postgres;
+
+--
+-- Name: pupil_need_override; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pupil_need_override (
+    override_id integer NOT NULL,
+    pupil_id integer,
+    need_id integer,
+    is_added boolean NOT NULL,
+    notes text
+);
+
+
+ALTER TABLE public.pupil_need_override OWNER TO postgres;
+
+--
+-- Name: pupil_need_override_override_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pupil_need_override_override_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pupil_need_override_override_id_seq OWNER TO postgres;
+
+--
+-- Name: pupil_need_override_override_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pupil_need_override_override_id_seq OWNED BY public.pupil_need_override.override_id;
+
 
 --
 -- Name: pupil_need_pupil_need_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -328,6 +435,13 @@ ALTER TABLE ONLY public.category ALTER COLUMN category_id SET DEFAULT nextval('p
 
 
 --
+-- Name: category_need category_need_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_need ALTER COLUMN category_need_id SET DEFAULT nextval('public.category_need_category_need_id_seq'::regclass);
+
+
+--
 -- Name: device device_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -363,6 +477,13 @@ ALTER TABLE ONLY public.pupil ALTER COLUMN pupil_id SET DEFAULT nextval('public.
 
 
 --
+-- Name: pupil_category pupil_category_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_category ALTER COLUMN pupil_category_id SET DEFAULT nextval('public.pupil_category_pupil_category_id_seq'::regclass);
+
+
+--
 -- Name: pupil_device_alter pupil_device_alter_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -374,6 +495,29 @@ ALTER TABLE ONLY public.pupil_device_alter ALTER COLUMN pupil_device_alter_id SE
 --
 
 ALTER TABLE ONLY public.pupil_need ALTER COLUMN pupil_need_id SET DEFAULT nextval('public.pupil_need_pupil_need_id_seq'::regclass);
+
+
+--
+-- Name: pupil_need_override override_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_need_override ALTER COLUMN override_id SET DEFAULT nextval('public.pupil_need_override_override_id_seq'::regclass);
+
+
+--
+-- Name: category_need category_need_category_id_need_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_need
+    ADD CONSTRAINT category_need_category_id_need_id_key UNIQUE (category_id, need_id);
+
+
+--
+-- Name: category_need category_need_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_need
+    ADD CONSTRAINT category_need_pkey PRIMARY KEY (category_need_id);
 
 
 --
@@ -417,11 +561,43 @@ ALTER TABLE ONLY public.need
 
 
 --
+-- Name: pupil_category pupil_category_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_category
+    ADD CONSTRAINT pupil_category_pkey PRIMARY KEY (pupil_category_id);
+
+
+--
+-- Name: pupil_category pupil_category_pupil_id_category_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_category
+    ADD CONSTRAINT pupil_category_pupil_id_category_id_key UNIQUE (pupil_id, category_id);
+
+
+--
 -- Name: pupil_device_alter pupil_device_alter_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.pupil_device_alter
     ADD CONSTRAINT pupil_device_alter_pkey PRIMARY KEY (pupil_device_alter_id);
+
+
+--
+-- Name: pupil_need_override pupil_need_override_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_need_override
+    ADD CONSTRAINT pupil_need_override_pkey PRIMARY KEY (override_id);
+
+
+--
+-- Name: pupil_need_override pupil_need_override_pupil_id_need_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_need_override
+    ADD CONSTRAINT pupil_need_override_pupil_id_need_id_key UNIQUE (pupil_id, need_id);
 
 
 --
@@ -441,11 +617,19 @@ ALTER TABLE ONLY public.pupil
 
 
 --
--- Name: need need_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: category_need category_need_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.need
-    ADD CONSTRAINT need_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.category(category_id);
+ALTER TABLE ONLY public.category_need
+    ADD CONSTRAINT category_need_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.category(category_id) ON DELETE CASCADE;
+
+
+--
+-- Name: category_need category_need_need_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.category_need
+    ADD CONSTRAINT category_need_need_id_fkey FOREIGN KEY (need_id) REFERENCES public.need(need_id) ON DELETE CASCADE;
 
 
 --
@@ -462,6 +646,22 @@ ALTER TABLE ONLY public.need_device
 
 ALTER TABLE ONLY public.need_device
     ADD CONSTRAINT need_device_need_id_fkey FOREIGN KEY (need_id) REFERENCES public.need(need_id) ON DELETE CASCADE;
+
+
+--
+-- Name: pupil_category pupil_category_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_category
+    ADD CONSTRAINT pupil_category_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.category(category_id) ON DELETE CASCADE;
+
+
+--
+-- Name: pupil_category pupil_category_pupil_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_category
+    ADD CONSTRAINT pupil_category_pupil_id_fkey FOREIGN KEY (pupil_id) REFERENCES public.pupil(pupil_id) ON DELETE CASCADE;
 
 
 --
@@ -494,6 +694,22 @@ ALTER TABLE ONLY public.pupil
 
 ALTER TABLE ONLY public.pupil_need
     ADD CONSTRAINT pupil_need_need_id_fkey FOREIGN KEY (need_id) REFERENCES public.need(need_id) ON DELETE CASCADE;
+
+
+--
+-- Name: pupil_need_override pupil_need_override_need_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_need_override
+    ADD CONSTRAINT pupil_need_override_need_id_fkey FOREIGN KEY (need_id) REFERENCES public.need(need_id) ON DELETE CASCADE;
+
+
+--
+-- Name: pupil_need_override pupil_need_override_pupil_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pupil_need_override
+    ADD CONSTRAINT pupil_need_override_pupil_id_fkey FOREIGN KEY (pupil_id) REFERENCES public.pupil(pupil_id) ON DELETE CASCADE;
 
 
 --

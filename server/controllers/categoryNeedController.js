@@ -10,6 +10,16 @@ const getCategoryNeeds = async (req, res) => {
   }
 };
 
+const getNeedCategories = async (req, res) => {
+  try {
+    const needId = req.params.needId;
+    const categories = await categoryNeedModel.getNeedCategories(needId);
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const addNeedToCategory = async (req, res) => {
   try {
     const { category_id, need_id } = req.body;
@@ -33,6 +43,7 @@ const removeNeedFromCategory = async (req, res) => {
 
 module.exports = {
   getCategoryNeeds,
+  getNeedCategories,
   addNeedToCategory,
   removeNeedFromCategory
 };

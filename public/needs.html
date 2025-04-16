@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Need Management - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/needs.css">
 </head>
 <body>
   <header>
@@ -32,19 +33,20 @@
           <input type="text" id="need_name" name="need_name" required>
         </div>
         <div>
-          <label for="category_id">Category:</label>
-          <select id="category_id" name="category_id" required>
-            <option value="">Select a category</option>
+          <label for="category_id">Primary Category:</label>
+          <select id="category_id" name="category_id">
+            <option value="">Select a primary category (optional)</option>
             <!-- Options will be populated dynamically -->
           </select>
+          <p class="hint">You can assign additional categories using the "Manage Categories" button after saving.</p>
         </div>
         <div>
-          <label for="description">Description:</label>
-          <textarea id="description" name="description"></textarea>
+          <label for="need_short_desc">Short Description:</label>
+          <input type="text" id="need_short_desc" name="need_short_desc">
         </div>
         <div>
-          <label for="short_description">Short Description:</label>
-          <textarea id="short_description" name="short_description"></textarea>
+          <label for="need_long_desc">Long Description:</label>
+          <textarea id="need_long_desc" name="need_long_desc"></textarea>
         </div>
 
         <button type="submit" id="saveNeedBtn">Save Need</button>
@@ -59,7 +61,7 @@
           <tr>
             <th>ID</th>
             <th>Need Name</th>
-            <th>Category</th>
+            <th>Categories</th>
             <th>Short Description</th>
             <th>Description</th>
             <th>Actions</th>
