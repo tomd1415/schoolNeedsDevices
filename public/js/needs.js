@@ -41,15 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
       for (const need of needs) {
         // Get categories for this need
         const needCategories = await loadNeedCategories(need.need_id);
-        const categoryNames = needCategories.map(cat => cat.category_name).join(', ');
+        const categoryNames = needCategories.map(cat => cat.name).join(', ');
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${need.need_id}</td>
-          <td>${need.need_name}</td>
+          <td>${need.name}</td>
           <td>${categoryNames || 'None'}</td>
-          <td>${need.need_short_desc || ''}</td>
-          <td>${need.need_long_desc || ''}</td>
+          <td>${need.short_description || ''}</td>
+          <td>${need.description || ''}</td>
           <td>
             <button class="editBtn" data-id="${need.need_id}">Edit</button>
             <button class="deleteBtn" data-id="${need.need_id}">Delete</button>
@@ -229,10 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const need = await response.json();
         if (need) {
           document.getElementById('need_id').value = need.need_id;
-          document.getElementById('need_name').value = need.need_name;
+          document.getElementById('need_name').value = need.name;
           document.getElementById('category_id').value = need.category_id || '';
-          document.getElementById('need_short_desc').value = need.need_short_desc || '';
-          document.getElementById('need_long_desc').value = need.need_long_desc || '';
+          document.getElementById('need_short_desc').value = need.short_description || '';
+          document.getElementById('need_long_desc').value = need.description || '';
         }
       } catch (error) {
         console.error('Error fetching need for editing:', error);

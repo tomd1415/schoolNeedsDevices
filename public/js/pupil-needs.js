@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     unassignedNeeds.forEach(need => {
       const option = document.createElement('option');
       option.value = need.need_id;
-      option.textContent = need.need_name;
+      option.textContent = need.name;
       needSelect.appendChild(option);
     });
   };
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         assignedNeeds.forEach(need => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${need.need_name}</td>
+            <td>${need.name}</td>
             <td>${need.category_name || 'Uncategorized'}</td>
             <td>${need.notes || ''}</td>
             <td>

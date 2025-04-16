@@ -44,11 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${device.device_id}</td>
-          <td>${device.device_name}</td>
-          <td>${device.device_model || ''}</td>
-          <td>${device.device_serial_number || ''}</td>
+          <td>${device.name}</td>
+          <td>${device.model || ''}</td>
+          <td>${device.serial_number || ''}</td>
           <td>${device.category_name || 'Uncategorised'}</td>
-          <td>${device.device_status || 'Unknown'}</td>
+          <td>${device.status || 'Unknown'}</td>
           <td>
             <button class="editBtn" data-id="${device.device_id}">Edit</button>
             <button class="deleteBtn" data-id="${device.device_id}">Delete</button>
