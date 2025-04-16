@@ -4,7 +4,7 @@ const getDevices = async () => {
   const result = await pool.query(`
     SELECT d.*, c.category_name 
     FROM device d
-    LEFT JOIN category c ON d.category_id = c.category_id
+    LEFT JOIN category c ON d.device_category_id = c.category_id
     ORDER BY d.device_name
   `);
   return result.rows;
@@ -14,7 +14,7 @@ const getDeviceById = async (id) => {
   const result = await pool.query(`
     SELECT d.*, c.category_name 
     FROM device d
-    LEFT JOIN category c ON d.category_id = c.category_id
+    LEFT JOIN category c ON d.device_category_id = c.category_id
     WHERE d.device_id = $1
   `, [id]);
   return result.rows[0];
@@ -23,7 +23,7 @@ const getDeviceById = async (id) => {
 const addDevice = async (device_name, model, serial_number, purchase_date, warranty_info, status, notes, category_id) => {
   const result = await pool.query(
     `INSERT INTO device (
-      device_name, model, serial_number, purchase_date, warranty_info, status, notes, category_id
+      device_name, device_model, device_serial_number, device_purchase_date, device_warranty_info, device_status, device_notes, device_category_id
     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
     [device_name, model, serial_number, purchase_date, warranty_info, status, notes, category_id]
   );
@@ -33,9 +33,7 @@ const addDevice = async (device_name, model, serial_number, purchase_date, warra
 const updateDevice = async (id, device_name, model, serial_number, purchase_date, warranty_info, status, notes, category_id) => {
   const result = await pool.query(
     `UPDATE device SET 
-      device_name = $2, model = $3, serial_number = $4, purchase_date = $5, 
-      warranty_info = $6, status = $7, notes = $8, category_id = $9 
-    WHERE device_id = $1 RETURNING *`,
+      device_name = $2, device_model = $3, device_serial_number = $4, device_purchase_date = $5, device_warranty_info = $6, device_status = $7, device_notes = $8, device_category_id = $9`
     [id, device_name, model, serial_number, purchase_date, warranty_info, status, notes, category_id]
   );
   return result.rows[0];
@@ -48,7 +46,7 @@ const deleteDevice = async (id) => {
 // Get devices assigned to a need
 const getNeedDevices = async (needId) => {
   const result = await pool.query(`
-    SELECT nd.*, d.device_name, d.model, d.serial_number, d.status
+    SELECT nd.*, d.device_name, d.device_model, d.device_serial_number, d.device_status
     FROM need_device nd
     JOIN device d ON nd.device_id = d.device_id
     WHERE nd.need_id = $1
