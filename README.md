@@ -15,7 +15,7 @@ School Needs Devices is a web application designed to help educational instituti
    - A category can be assigned to multiple pupils
 
 2. **Needs**: Specific requirements or accommodations (e.g., Screen Reader, Extended Time)
-   - A need can belong to multiple categories
+   - A need can belong to multiple categories (many-to-many relationship)
    - A need is automatically assigned to a pupil when its category is assigned to that pupil
    - Individual needs can be added to or removed from specific pupils via overrides
 
@@ -41,6 +41,7 @@ The project has a full-stack implementation with the following components:
 - Clean, responsive interface with navigation
 - Pages for managing entities and relationships
 - Forms for creating and editing records
+- Modal dialogs for managing relationships
 
 ## Implemented Features
 
@@ -51,15 +52,23 @@ The project has a full-stack implementation with the following components:
 - ✅ Device assignment to address specific needs
 - ✅ Dropdown selections for related entities
 - ✅ CSV upload for pupil data
+- ✅ Many-to-many relationship between needs and categories
+- ✅ Effective needs calculation based on pupil categories and overrides
 
-## Known Issues
+## Recently Resolved Issues
 
-- ❌ Update functionality for most entities not working correctly
-- ❌ Database schema has changed but create_db.sql file is outdated
-- ❌ Inconsistencies in field naming between database and code (prefixed vs. non-prefixed)
-- ❌ Missing integration of the effective needs calculation in the frontend
-- ❌ Routes for pupil-category and category-needs not registered in the main server file
-- ❌ Inconsistent handling of need descriptions (short vs. long)
+- ✅ Routes for pupil-category and category-needs now registered in the main server file
+- ✅ Integration of the effective needs calculation in the frontend
+- ✅ Fixed inconsistencies in field naming between database and code (standardized on snake_case)
+- ✅ PostgreSQL query parameters are now correctly using $1, $2 format instead of ? placeholders
+- ✅ Added proper validation to prevent empty database records
+- ✅ Fixed category-to-pupil assignment functionality
+
+## Remaining Issues
+
+- ❌ Update functionality for some entities not fully implemented
+- ❌ create_db.sql file needs updating to match the current schema_dump.sql
+- ❌ Some inconsistencies in handling need descriptions (short vs. long)
 
 ## Project Structure
 
@@ -77,17 +86,31 @@ The project has a full-stack implementation with the following components:
     └── uploads/          # Uploaded files
 ```
 
+## Database Schema
+
+The database uses a relational structure with the following key tables:
+
+- `category`: Stores categories of needs
+- `need`: Stores individual needs
+- `category_need`: Junction table for many-to-many relationship between categories and needs
+- `pupil`: Stores pupil information
+- `pupil_category`: Junction table linking pupils to categories
+- `pupil_need_override`: Stores overrides that add or remove specific needs for pupils
+- `device`: Stores device information
+- `need_device`: Junction table linking needs to their associated devices
+
 ## Key Workflows
 
 1. **Category-Need Management**
    - Create categories representing types of needs
    - Create individual needs
-   - Assign needs to appropriate categories
+   - Assign needs to appropriate categories using the "Manage Categories" feature
 
 2. **Pupil Management**
    - Create pupil records
    - Assign categories to pupils (which automatically assigns all needs in those categories)
    - Create individual overrides by adding or removing specific needs
+   - View effective needs based on categories and overrides
 
 3. **Device Management**
    - Create device records with appropriate details
@@ -95,21 +118,19 @@ The project has a full-stack implementation with the following components:
 
 ## Next Steps
 
-1. Register missing routes in server/index.js
-2. Implement the effective needs calculation in needModel.js
-3. Update the create_db.sql file to match the current database schema
-4. Fix field naming inconsistencies across models and database
-5. Fix update functionality for all entities
-6. Update the frontend to work with the new relationship structure
-7. Add validation and error handling
-8. Create dedicated UI for viewing effective needs based on categories and overrides
-9. Add reporting functionality
+1. Update the create_db.sql file to match the current database schema
+2. Fix update functionality for all entities
+3. Add more comprehensive validation and error handling
+4. Create dedicated UI for viewing effective needs based on categories and overrides
+5. Add reporting functionality
+6. Add user authentication and authorization
+7. Implement audit trails for tracking changes
 
 ## Usage
 
 1. Clone the repository
-2. Install dependencies with `npm install`
+2. Install dependencies with `npm install` in the server directory
 3. Configure the database in `server/.env`
-4. Set up the database schema using the latest SQL file
-5. Start the server with `npm start`
-6. Access the application at http://localhost:3000
+4. Set up the database schema using the latest schema_dump.sql file
+5. Start the server with `node index.js` from the server directory
+6. Access the application at http://localhost:5000
