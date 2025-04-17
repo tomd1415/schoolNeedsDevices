@@ -12,7 +12,7 @@ const getCategoryById = async (id) => {
 
 const addCategory = async (category_name, description) => {
   const result = await pool.query(
-    'INSERT INTO category (category_name, category_description) VALUES ($1, $2) RETURNING *',
+    'INSERT INTO category (category_name, description) VALUES ($1, $2) RETURNING *',
     [category_name, description]
   );
   return result.rows[0];

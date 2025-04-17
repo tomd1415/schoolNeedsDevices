@@ -11,7 +11,7 @@ const pupilCategoryRoutes = require('./routes/pupilCategoryRoutes');
 const categoryNeedRoutes = require('./routes/categoryNeedRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Middleware to parse JSON and URL-encoded bodies
 app.use(bodyParser.json());

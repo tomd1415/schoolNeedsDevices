@@ -137,32 +137,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // Get effective needs for a pupil (from categories + overrides)
   const loadEffectiveNeeds = async (pupilId) => {
     try {
+      console.log(`Loading effective needs for pupil ${pupilId}`);
       const response = await fetch(`/api/pupil-categories/${pupilId}/effective-needs`);
       effectiveNeeds = await response.json();
+      console.log('Received effective needs:', effectiveNeeds);
       
       // Display effective needs
       effectiveNeedsTable.innerHTML = '';
       
-      if (effectiveNeeds.length === 0) {
+      if (!effectiveNeeds || effectiveNeeds.length === 0) {
+        console.log('No effective needs found');
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="4">No needs assigned yet</td>';
+        tr.innerHTML = '<td colspan="4">No needs assigned yet. Assign a category first or add an individual need.</td>';
         effectiveNeedsTable.appendChild(tr);
       } else {
         effectiveNeeds.forEach(need => {
+          console.log('Processing need:', need);
           // Determine source (category or override)
-          let source = 'Unknown';
+          let source = 'Individual assignment';
           
-          // Try to find if this need comes from a category
-          const needCategories = need.categories || [];
-          if (needCategories.length > 0) {
-            source = `From categories: ${needCategories.join(', ')}`;
-          } else {
-            source = 'Individual assignment';
+          // If the need has a categories field (from a category)
+          if (need.categories) {
+            source = `From category: ${need.categories}`;
           }
           
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${need.name}</td>
+            <td>${need.name || 'Unknown'}</td>
             <td>${need.category_name || 'N/A'}</td>
             <td>${source}</td>
             <td>${need.description || need.short_description || ''}</td>
@@ -172,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (error) {
       console.error('Error loading effective needs:', error);
+      effectiveNeedsTable.innerHTML = '<tr><td colspan="4">Error loading needs. Check console for details.</td></tr>';
     }
   };
   
@@ -278,10 +280,27 @@ document.addEventListener('DOMContentLoaded', () => {
     addNeedSelect.innerHTML = '<option value="">Select a need</option>';
     removeNeedSelect.innerHTML = '<option value="">Select a need</option>';
     
-    if (!effectiveNeeds.length) return;
+    console.log('Updating need dropdowns');
+    console.log('All needs:', allNeeds);
+    console.log('Effective needs:', effectiveNeeds);
+    
+    // If we have no effective needs yet, we should still populate the add dropdown with all needs
+    // but we can't populate the remove dropdown (since there's nothing to remove)
+    if (!effectiveNeeds.length) {
+      console.log('No effective needs, populating add dropdown with all needs');
+      // For add dropdown, show all available needs
+      allNeeds.forEach(need => {
+        const option = document.createElement('option');
+        option.value = need.need_id;
+        option.textContent = need.name;
+        addNeedSelect.appendChild(option);
+      });
+      return;
+    }
     
     // Get IDs of needs already assigned through any means
     const effectiveNeedIds = effectiveNeeds.map(n => n.need_id);
+    console.log('Effective need IDs:', effectiveNeedIds);
     
     // For add dropdown, show needs not already assigned
     allNeeds
