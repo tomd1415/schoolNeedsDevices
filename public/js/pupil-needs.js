@@ -1,21 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
   const pupilSelect = document.getElementById('pupil_id');
-  const needSelect = document.getElementById('need_id');
-  const assignNeedForm = document.getElementById('assignNeedForm');
-  const assignedNeedsTableBody = document.querySelector('#assignedNeedsTable tbody');
-  
   const pupilInfoSection = document.getElementById('pupil-info');
-  const assignNeedSection = document.getElementById('assign-need-section');
-  const assignedNeedsSection = document.getElementById('assigned-needs-section');
+  const assignCategorySection = document.getElementById('assign-category-section');
+  const needsOverviewSection = document.getElementById('needs-overview-section');
   
   const pupilNameSpan = document.getElementById('pupil-name');
   const pupilFormSpan = document.getElementById('pupil-form');
   const pupilNotesSpan = document.getElementById('pupil-notes');
   
+  const assignCategoryForm = document.getElementById('assignCategoryForm');
+  const categorySelect = document.getElementById('category_id');
+  const categoriesList = document.getElementById('categories-list');
+  
+  const effectiveNeedsTable = document.getElementById('effectiveNeedsTable').querySelector('tbody');
+  const overridesTable = document.getElementById('overridesTable').querySelector('tbody');
+  
+  const addNeedForm = document.getElementById('addNeedForm');
+  const removeNeedForm = document.getElementById('removeNeedForm');
+  const addNeedSelect = document.getElementById('add_need_id');
+  const removeNeedSelect = document.getElementById('remove_need_id');
+  
+  // Tab switching functionality
+  document.querySelectorAll('.tabs .tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all buttons and hide all content
+      const tabsContainer = button.closest('.tabs');
+      tabsContainer.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Find the parent section
+      const sectionContainer = tabsContainer.closest('section');
+      sectionContainer.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+      
+      // Add active class to clicked button and show related content
+      button.classList.add('active');
+      const tabId = button.getAttribute('data-tab');
+      document.getElementById(tabId).style.display = 'block';
+    });
+  });
+  
   let selectedPupil = null;
-  let availableNeeds = [];
-  let assignedNeeds = [];
-
+  let allCategories = [];
+  let allNeeds = [];
+  let effectiveNeeds = [];
+  
+  // ======= Data Loading Functions =======
+  
   // Load pupils for the dropdown
   const loadPupils = async () => {
     try {
@@ -32,64 +61,167 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error loading pupils:', error);
     }
   };
-
-  // Load needs for the dropdown
+  
+  // Load all categories
+  const loadCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      allCategories = await response.json();
+      
+      // Populate category dropdown
+      categorySelect.innerHTML = '<option value="">Select a category</option>';
+      allCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.category_id;
+        option.textContent = category.category_name;
+        categorySelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
+  
+  // Load all needs
   const loadNeeds = async () => {
     try {
       const response = await fetch('/api/needs');
-      availableNeeds = await response.json();
-      updateNeedDropdown();
+      allNeeds = await response.json();
     } catch (error) {
       console.error('Error loading needs:', error);
     }
   };
-
-  // Update the need dropdown to only show unassigned needs
-  const updateNeedDropdown = () => {
-    const assignedNeedIds = assignedNeeds.map(an => an.need_id);
-    const unassignedNeeds = availableNeeds.filter(need => !assignedNeedIds.includes(need.need_id));
-    
-    needSelect.innerHTML = '<option value="">Select a need</option>';
-    unassignedNeeds.forEach(need => {
-      const option = document.createElement('option');
-      option.value = need.need_id;
-      option.textContent = need.name;
-      needSelect.appendChild(option);
-    });
-  };
-
-  // Load assigned needs for a pupil
-  const loadAssignedNeeds = async (pupilId) => {
+  
+  // Get categories assigned to a pupil
+  const loadPupilCategories = async (pupilId) => {
     try {
-      const response = await fetch(`/api/needs/pupil/${pupilId}`);
-      assignedNeeds = await response.json();
+      const response = await fetch(`/api/pupil-categories/${pupilId}/categories`);
+      const categories = await response.json();
       
-      assignedNeedsTableBody.innerHTML = '';
-      if (assignedNeeds.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="4">No needs assigned yet</td>';
-        assignedNeedsTableBody.appendChild(tr);
+      // Display assigned categories
+      if (categories.length === 0) {
+        categoriesList.innerHTML = '<p>No categories assigned yet.</p>';
       } else {
-        assignedNeeds.forEach(need => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${need.name}</td>
-            <td>${need.category_name || 'Uncategorized'}</td>
-            <td>${need.notes || ''}</td>
-            <td>
-              <button class="deleteBtn" data-needid="${need.need_id}">Remove</button>
-            </td>
+        let html = '<ul class="categories">';
+        categories.forEach(category => {
+          html += `
+            <li>
+              <span>${category.category_name}</span>
+              <button class="remove-cat-btn" data-id="${category.category_id}">Remove</button>
+            </li>
           `;
-          assignedNeedsTableBody.appendChild(tr);
+        });
+        html += '</ul>';
+        categoriesList.innerHTML = html;
+        
+        // Add event listeners to remove buttons
+        categoriesList.querySelectorAll('.remove-cat-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const categoryId = btn.getAttribute('data-id');
+            await removeCategoryFromPupil(pupilId, categoryId);
+            await loadPupilCategories(pupilId);
+            await loadEffectiveNeeds(pupilId);
+            await loadNeedOverrides(pupilId);
+            updateNeedDropdowns();
+          });
         });
       }
       
-      updateNeedDropdown();
+      // Update category dropdown to exclude already assigned categories
+      updateCategoryDropdown(categories);
+      
     } catch (error) {
-      console.error('Error loading assigned needs:', error);
+      console.error('Error loading pupil categories:', error);
     }
   };
-
+  
+  // Get effective needs for a pupil (from categories + overrides)
+  const loadEffectiveNeeds = async (pupilId) => {
+    try {
+      const response = await fetch(`/api/pupil-categories/${pupilId}/effective-needs`);
+      effectiveNeeds = await response.json();
+      
+      // Display effective needs
+      effectiveNeedsTable.innerHTML = '';
+      
+      if (effectiveNeeds.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="4">No needs assigned yet</td>';
+        effectiveNeedsTable.appendChild(tr);
+      } else {
+        effectiveNeeds.forEach(need => {
+          // Determine source (category or override)
+          let source = 'Unknown';
+          
+          // Try to find if this need comes from a category
+          const needCategories = need.categories || [];
+          if (needCategories.length > 0) {
+            source = `From categories: ${needCategories.join(', ')}`;
+          } else {
+            source = 'Individual assignment';
+          }
+          
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${need.name}</td>
+            <td>${need.category_name || 'N/A'}</td>
+            <td>${source}</td>
+            <td>${need.description || need.short_description || ''}</td>
+          `;
+          effectiveNeedsTable.appendChild(tr);
+        });
+      }
+    } catch (error) {
+      console.error('Error loading effective needs:', error);
+    }
+  };
+  
+  // Get need overrides for a pupil
+  const loadNeedOverrides = async (pupilId) => {
+    try {
+      const response = await fetch(`/api/pupil-categories/${pupilId}/need-overrides`);
+      const overrides = await response.json();
+      
+      // Display overrides
+      overridesTable.innerHTML = '';
+      
+      if (overrides.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="4">No overrides set</td>';
+        overridesTable.appendChild(tr);
+      } else {
+        overrides.forEach(override => {
+          // Find the need name
+          const need = allNeeds.find(n => n.need_id === override.need_id);
+          const needName = need ? need.name : `Need #${override.need_id}`;
+          
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${needName}</td>
+            <td>${override.is_added ? 'Added' : 'Removed'}</td>
+            <td>${override.notes || ''}</td>
+            <td>
+              <button class="deleteBtn" data-id="${override.override_id}">Remove Override</button>
+            </td>
+          `;
+          overridesTable.appendChild(tr);
+        });
+        
+        // Add event listeners to delete buttons
+        overridesTable.querySelectorAll('.deleteBtn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const overrideId = btn.getAttribute('data-id');
+            await removeNeedOverride(overrideId);
+            await loadNeedOverrides(pupilId);
+            await loadEffectiveNeeds(pupilId);
+            updateNeedDropdowns();
+          });
+        });
+      }
+    } catch (error) {
+      console.error('Error loading need overrides:', error);
+    }
+  };
+  
   // Load pupil details
   const loadPupilDetails = async (pupilId) => {
     try {
@@ -99,23 +231,153 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (selectedPupil) {
         pupilNameSpan.textContent = `${selectedPupil.first_name} ${selectedPupil.last_name}`;
-        pupilFormSpan.textContent = selectedPupil.form_id; // This should ideally be form name
+        pupilFormSpan.textContent = selectedPupil.form_id || 'Not assigned';
         pupilNotesSpan.textContent = selectedPupil.notes || 'None';
         
-        // Show the pupil info, assign, and assigned needs sections
+        // Show the pupil info and other sections
         pupilInfoSection.style.display = 'block';
-        assignNeedSection.style.display = 'block';
-        assignedNeedsSection.style.display = 'block';
+        assignCategorySection.style.display = 'block';
+        needsOverviewSection.style.display = 'block';
         
-        // Load the assigned needs for this pupil
-        loadAssignedNeeds(pupilId);
+        // Load pupil-specific data
+        await loadPupilCategories(pupilId);
+        await loadEffectiveNeeds(pupilId);
+        await loadNeedOverrides(pupilId);
+        
+        // Update the need dropdowns
+        updateNeedDropdowns();
       }
     } catch (error) {
       console.error('Error loading pupil details:', error);
     }
   };
-
-  // Pupil selection change event
+  
+  // ======= Helper Functions =======
+  
+  // Update category dropdown to exclude already assigned categories
+  const updateCategoryDropdown = (assignedCategories) => {
+    const assignedCategoryIds = assignedCategories.map(c => c.category_id);
+    
+    // Reset dropdown
+    categorySelect.innerHTML = '<option value="">Select a category</option>';
+    
+    // Add only unassigned categories
+    allCategories
+      .filter(category => !assignedCategoryIds.includes(category.category_id))
+      .forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.category_id;
+        option.textContent = category.category_name;
+        categorySelect.appendChild(option);
+      });
+  };
+  
+  // Update need dropdowns for adding/removing needs
+  const updateNeedDropdowns = () => {
+    // Reset dropdowns
+    addNeedSelect.innerHTML = '<option value="">Select a need</option>';
+    removeNeedSelect.innerHTML = '<option value="">Select a need</option>';
+    
+    if (!effectiveNeeds.length) return;
+    
+    // Get IDs of needs already assigned through any means
+    const effectiveNeedIds = effectiveNeeds.map(n => n.need_id);
+    
+    // For add dropdown, show needs not already assigned
+    allNeeds
+      .filter(need => !effectiveNeedIds.includes(need.need_id))
+      .forEach(need => {
+        const option = document.createElement('option');
+        option.value = need.need_id;
+        option.textContent = need.name;
+        addNeedSelect.appendChild(option);
+      });
+    
+    // For remove dropdown, show only needs that came from categories
+    // (these are the only ones that can be removed via overrides)
+    effectiveNeeds
+      .filter(need => need.categories && need.categories.length > 0)
+      .forEach(need => {
+        const option = document.createElement('option');
+        option.value = need.need_id;
+        option.textContent = need.name;
+        removeNeedSelect.appendChild(option);
+      });
+  };
+  
+  // ======= API Functions =======
+  
+  // Assign category to pupil
+  const assignCategoryToPupil = async (pupilId, categoryId) => {
+    try {
+      const response = await fetch('/api/pupil-categories/assign-category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pupil_id: pupilId, category_id: categoryId })
+      });
+      
+      if (!response.ok) throw new Error('Failed to assign category');
+      
+      return true;
+    } catch (error) {
+      console.error('Error assigning category:', error);
+      return false;
+    }
+  };
+  
+  // Remove category from pupil
+  const removeCategoryFromPupil = async (pupilId, categoryId) => {
+    try {
+      const response = await fetch(`/api/pupil-categories/${pupilId}/categories/${categoryId}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) throw new Error('Failed to remove category');
+      
+      return true;
+    } catch (error) {
+      console.error('Error removing category:', error);
+      return false;
+    }
+  };
+  
+  // Add need override
+  const addNeedOverride = async (pupilId, needId, isAdded, notes) => {
+    try {
+      const response = await fetch('/api/pupil-categories/need-override', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pupil_id: pupilId, need_id: needId, is_added: isAdded, notes })
+      });
+      
+      if (!response.ok) throw new Error('Failed to add need override');
+      
+      return true;
+    } catch (error) {
+      console.error('Error adding need override:', error);
+      return false;
+    }
+  };
+  
+  // Remove need override
+  const removeNeedOverride = async (overrideId) => {
+    try {
+      const response = await fetch(`/api/pupil-categories/need-override/${overrideId}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) throw new Error('Failed to remove need override');
+      
+      return true;
+    } catch (error) {
+      console.error('Error removing need override:', error);
+      return false;
+    }
+  };
+  
+  // ======= Event Listeners =======
+  
+  // Pupil selection change
   pupilSelect.addEventListener('change', () => {
     const pupilId = pupilSelect.value;
     if (pupilId) {
@@ -123,13 +385,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // Hide sections if no pupil is selected
       pupilInfoSection.style.display = 'none';
-      assignNeedSection.style.display = 'none';
-      assignedNeedsSection.style.display = 'none';
+      assignCategorySection.style.display = 'none';
+      needsOverviewSection.style.display = 'none';
     }
   });
-
-  // Handle assign need form submission
-  assignNeedForm.addEventListener('submit', async (e) => {
+  
+  // Assign category form submission
+  assignCategoryForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     if (!selectedPupil) {
@@ -137,61 +399,79 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
-    const needId = needSelect.value;
-    const notes = document.getElementById('notes').value;
+    const categoryId = categorySelect.value;
     
-    if (!needId) {
-      alert('Please select a need to assign');
+    if (!categoryId) {
+      alert('Please select a category');
       return;
     }
     
-    const assignData = {
-      pupil_id: selectedPupil.pupil_id,
-      need_id: needId,
-      notes
-    };
+    const success = await assignCategoryToPupil(selectedPupil.pupil_id, categoryId);
     
-    try {
-      const response = await fetch('/api/needs/pupil', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(assignData)
-      });
-      
-      if (!response.ok) throw new Error('Failed to assign need');
-      
-      // Reload the assigned needs
-      loadAssignedNeeds(selectedPupil.pupil_id);
-      
-      // Reset the form
-      assignNeedForm.reset();
-    } catch (error) {
-      console.error('Error assigning need:', error);
+    if (success) {
+      await loadPupilCategories(selectedPupil.pupil_id);
+      await loadEffectiveNeeds(selectedPupil.pupil_id);
+      updateNeedDropdowns();
+      assignCategoryForm.reset();
     }
   });
-
-  // Handle removing assigned needs
-  assignedNeedsTableBody.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('deleteBtn')) {
-      const needId = e.target.getAttribute('data-needid');
-      if (confirm('Are you sure you want to remove this need assignment?')) {
-        try {
-          const response = await fetch(`/api/needs/pupil/${selectedPupil.pupil_id}/need/${needId}`, {
-            method: 'DELETE'
-          });
-          
-          if (!response.ok) throw new Error('Failed to remove need assignment');
-          
-          // Reload the assigned needs
-          loadAssignedNeeds(selectedPupil.pupil_id);
-        } catch (error) {
-          console.error('Error removing need assignment:', error);
-        }
-      }
+  
+  // Add need form submission
+  addNeedForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!selectedPupil) {
+      alert('Please select a pupil first');
+      return;
+    }
+    
+    const needId = addNeedSelect.value;
+    const notes = document.getElementById('add_notes').value;
+    
+    if (!needId) {
+      alert('Please select a need');
+      return;
+    }
+    
+    const success = await addNeedOverride(selectedPupil.pupil_id, needId, true, notes);
+    
+    if (success) {
+      await loadNeedOverrides(selectedPupil.pupil_id);
+      await loadEffectiveNeeds(selectedPupil.pupil_id);
+      updateNeedDropdowns();
+      addNeedForm.reset();
     }
   });
-
-  // Initialize the page
+  
+  // Remove need form submission
+  removeNeedForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (!selectedPupil) {
+      alert('Please select a pupil first');
+      return;
+    }
+    
+    const needId = removeNeedSelect.value;
+    const notes = document.getElementById('remove_notes').value;
+    
+    if (!needId) {
+      alert('Please select a need');
+      return;
+    }
+    
+    const success = await addNeedOverride(selectedPupil.pupil_id, needId, false, notes);
+    
+    if (success) {
+      await loadNeedOverrides(selectedPupil.pupil_id);
+      await loadEffectiveNeeds(selectedPupil.pupil_id);
+      updateNeedDropdowns();
+      removeNeedForm.reset();
+    }
+  });
+  
+  // Initialize page
   loadPupils();
+  loadCategories();
   loadNeeds();
 }); 

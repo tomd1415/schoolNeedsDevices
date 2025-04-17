@@ -735,6 +735,13 @@ GRANT ALL ON SEQUENCE public.category_category_id_seq TO webuser;
 
 
 --
+-- Name: TABLE category_need; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.category_need TO webuser;
+
+
+--
 -- Name: TABLE device; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -798,6 +805,13 @@ GRANT ALL ON TABLE public.pupil TO webuser;
 
 
 --
+-- Name: TABLE pupil_category; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.pupil_category TO webuser;
+
+
+--
 -- Name: TABLE pupil_device_alter; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -816,6 +830,13 @@ GRANT ALL ON SEQUENCE public.pupil_device_alter_pupil_device_alter_id_seq TO web
 --
 
 GRANT ALL ON TABLE public.pupil_need TO webuser;
+
+
+--
+-- Name: TABLE pupil_need_override; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.pupil_need_override TO webuser;
 
 
 --

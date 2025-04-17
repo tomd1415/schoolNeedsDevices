@@ -1,17 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const pupilCategoryController = require('../controllers/pupilCategoryController');
-const pupilNeedOverrideController = require('../controllers/pupilNeedOverrideController');
 
+// Pupil category routes
 router.get('/:pupilId/categories', pupilCategoryController.getPupilCategories);
-router.post('/assign-category', pupilCategoryController.assignCategoryToPupil);
-router.delete('/:pupilId/categories/:categoryId', pupilCategoryController.removeCategoryFromPupil);
+router.post('/assign-category', pupilCategoryController.assignCategory);
+router.delete('/:pupilId/categories/:categoryId', pupilCategoryController.removeCategory);
 
-router.get('/:pupilId/effective-needs', pupilCategoryController.getPupilEffectiveNeeds);
+// Need override routes
+router.get('/:pupilId/need-overrides', pupilCategoryController.getNeedOverrides);
+router.post('/need-override', pupilCategoryController.addNeedOverride);
+router.delete('/need-override/:overrideId', pupilCategoryController.removeNeedOverride);
 
-router.get('/:pupilId/need-overrides', pupilNeedOverrideController.getPupilNeedOverrides);
-router.post('/need-override', pupilNeedOverrideController.addNeedOverride);
-router.put('/need-override/:overrideId', pupilNeedOverrideController.updateNeedOverride);
-router.delete('/need-override/:overrideId', pupilNeedOverrideController.removeNeedOverride);
+// Effective needs route
+router.get('/:pupilId/effective-needs', pupilCategoryController.getEffectivePupilNeeds);
 
 module.exports = router;

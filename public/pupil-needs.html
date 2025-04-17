@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Assign Needs to Pupils - Exhall Grange School</title>
+  <title>Manage Pupil Needs - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
 </head>
 <body>
   <header>
-    <h1>Assign Needs to Pupils</h1>
+    <h1>Manage Pupil Needs</h1>
   </header>
   <nav>
     <ul>
@@ -42,41 +42,122 @@
       <p><strong>Notes:</strong> <span id="pupil-notes"></span></p>
     </section>
 
-    <!-- Assign Need Section -->
-    <section id="assign-need-section" class="form-section" style="display: none;">
-      <h2>Assign Need</h2>
-      <form id="assignNeedForm">
-        <div>
-          <label for="need_id">Need:</label>
-          <select id="need_id" name="need_id" required>
-            <option value="">Select a need</option>
-            <!-- Options will be populated dynamically -->
-          </select>
+    <!-- Assign Categories Section -->
+    <section id="assign-category-section" class="form-section" style="display: none;">
+      <h2>Manage Categories</h2>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="assigned-categories">Assigned Categories</button>
+        <button class="tab-btn" data-tab="assign-category">Assign New Category</button>
+      </div>
+      
+      <div id="assigned-categories" class="tab-content">
+        <h3>Assigned Categories</h3>
+        <div id="categories-list">
+          <!-- Populated dynamically -->
+          <p>No categories assigned yet.</p>
         </div>
-        <div>
-          <label for="notes">Notes about this need for the pupil:</label>
-          <textarea id="notes" name="notes"></textarea>
-        </div>
-        <button type="submit" id="assignNeedBtn">Assign Need</button>
-      </form>
+      </div>
+      
+      <div id="assign-category" class="tab-content" style="display: none;">
+        <h3>Assign New Category</h3>
+        <form id="assignCategoryForm">
+          <div>
+            <label for="category_id">Category:</label>
+            <select id="category_id" name="category_id" required>
+              <option value="">Select a category</option>
+              <!-- Options will be populated dynamically -->
+            </select>
+          </div>
+          <button type="submit" id="assignCategoryBtn">Assign Category</button>
+        </form>
+      </div>
     </section>
 
-    <!-- Assigned Needs Section -->
-    <section id="assigned-needs-section" class="list-section" style="display: none;">
-      <h2>Assigned Needs</h2>
-      <table id="assignedNeedsTable">
-        <thead>
-          <tr>
-            <th>Need</th>
-            <th>Category</th>
-            <th>Notes</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Dynamically filled with need data -->
-        </tbody>
-      </table>
+    <!-- Needs Overview Section -->
+    <section id="needs-overview-section" class="list-section" style="display: none;">
+      <h2>Needs Overview</h2>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="effective-needs">Effective Needs</button>
+        <button class="tab-btn" data-tab="need-overrides">Manage Overrides</button>
+      </div>
+
+      <div id="effective-needs" class="tab-content">
+        <h3>Effective Needs</h3>
+        <p class="hint">These are all the needs assigned to this pupil based on their categories and individual overrides.</p>
+        <table id="effectiveNeedsTable">
+          <thead>
+            <tr>
+              <th>Need</th>
+              <th>Category</th>
+              <th>Source</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamically filled with need data -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="need-overrides" class="tab-content" style="display: none;">
+        <h3>Manage Need Overrides</h3>
+        <p class="hint">Here you can add specific needs or exclude needs that would normally be assigned through categories.</p>
+        
+        <div class="override-actions">
+          <div>
+            <h4>Add Individual Need</h4>
+            <form id="addNeedForm">
+              <div>
+                <label for="add_need_id">Need to Add:</label>
+                <select id="add_need_id" name="need_id" required>
+                  <option value="">Select a need</option>
+                  <!-- Options populated dynamically -->
+                </select>
+              </div>
+              <div>
+                <label for="add_notes">Notes:</label>
+                <textarea id="add_notes" name="notes"></textarea>
+              </div>
+              <button type="submit">Add Need</button>
+            </form>
+          </div>
+
+          <div>
+            <h4>Remove Category Need</h4>
+            <form id="removeNeedForm">
+              <div>
+                <label for="remove_need_id">Need to Remove:</label>
+                <select id="remove_need_id" name="need_id" required>
+                  <option value="">Select a need</option>
+                  <!-- Options populated dynamically -->
+                </select>
+              </div>
+              <div>
+                <label for="remove_notes">Reason for removal:</label>
+                <textarea id="remove_notes" name="notes"></textarea>
+              </div>
+              <button type="submit">Remove Need</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="current-overrides">
+          <h4>Current Overrides</h4>
+          <table id="overridesTable">
+            <thead>
+              <tr>
+                <th>Need</th>
+                <th>Type</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamically filled with override data -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
   </main>
   <script src="js/pupil-needs.js"></script>

@@ -33,7 +33,8 @@ const addDevice = async (name, model, serial_number, purchase_date, warranty_inf
 const updateDevice = async (id, name, model, serial_number, purchase_date, warranty_info, status, notes, category_id) => {
   const result = await pool.query(
     `UPDATE device SET 
-      name = $2, model = $3, serial_number = $4, purchase_date = $5, warranty_info = $6, status = $7, notes = $8, category_id = $9`
+      name = $2, model = $3, serial_number = $4, purchase_date = $5, warranty_info = $6, status = $7, notes = $8, category_id = $9
+     WHERE device_id = $1 RETURNING *`,
     [id, name, model, serial_number, purchase_date, warranty_info, status, notes, category_id]
   );
   return result.rows[0];
