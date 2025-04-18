@@ -980,4 +980,64 @@ main {
 .radio-option label {
   margin-left: 8px;
   font-weight: normal;
+}
+
+/* Toggle Switch Styling */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.toggle-label {
+  margin-right: 10px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.toggle-switch-container {
+  position: relative;
+  display: inline-block;
+}
+
+.toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-switch {
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  background-color: var(--gray-300);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.toggle-slider {
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: var(--transition);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-input:checked + .toggle-switch {
+  background-color: var(--primary-color);
+}
+
+.toggle-input:checked + .toggle-switch .toggle-slider {
+  transform: translateX(26px);
+}
+
+.toggle-input:focus + .toggle-switch {
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.3);
 } 

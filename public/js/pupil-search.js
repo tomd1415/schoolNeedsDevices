@@ -65,8 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   if (editToggleBtn) {
-    editToggleBtn.addEventListener('click', function() {
-      toggleEditMode();
+    editToggleBtn.addEventListener('change', function() {
+      toggleEditMode(this.checked);
     });
   }
   
@@ -96,14 +96,20 @@ document.addEventListener('DOMContentLoaded', function() {
   
   /**
    * Toggle between view and edit modes
+   * @param {boolean} forceState - Optional boolean to force a specific state
    */
-  function toggleEditMode() {
-    isEditMode = !isEditMode;
+  function toggleEditMode(forceState) {
+    // If forceState is provided, use it, otherwise toggle the current state
+    isEditMode = forceState !== undefined ? forceState : !isEditMode;
+    
+    // Update toggle switch if state was toggled programmatically
+    if (editToggleBtn && editToggleBtn.checked !== isEditMode) {
+      editToggleBtn.checked = isEditMode;
+    }
     
     // Toggle edit mode class on profile content
     if (isEditMode) {
       profileContent.classList.add('edit-mode');
-      editToggleBtn.classList.add('active');
       
       // Show edit controls
       const editControls = document.querySelector('.edit-controls');
@@ -112,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } else {
       profileContent.classList.remove('edit-mode');
-      editToggleBtn.classList.remove('active');
       
       // Hide edit controls
       const editControls = document.querySelector('.edit-controls');
@@ -330,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function saveChanges() {
     if (!currentPupilData || Object.keys(changedFields).length === 0) {
       // No changes to save
-      toggleEditMode();
+      toggleEditMode(false);
       return;
     }
     
@@ -382,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
         changedFields = {};
         
         // Exit edit mode
-        toggleEditMode();
+        toggleEditMode(false);
         
         // Show success message
         alert('Changes saved successfully');
@@ -414,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Exit edit mode
-    toggleEditMode();
+    toggleEditMode(false);
   }
   
   /**
@@ -462,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function loadPupilProfile(pupilIdentifier) {
     // Exit edit mode if active
     if (isEditMode) {
-      toggleEditMode();
+      toggleEditMode(false);
     }
     
     // Reset changed fields
@@ -875,118 +880,105 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if a pupil is selected
     if (!currentPupilData) return;
     
-    // Fetch all categories
+    // Create container for form elements
+    const formContainer = document.createElement('div');
+    formContainer.className = 'modal-form-container';
+    
+    // Create the form section
+    const categorySelectSection = document.createElement('div');
+    categorySelectSection.className = 'form-group';
+    categorySelectSection.innerHTML = `
+      <label for="category-select">Category:</label>
+      <div id="category-select-container"></div>
+    `;
+    
+    // Add form section to container
+    formContainer.appendChild(document.createElement('p')).textContent = 
+      `Add a category for ${currentPupilData.first_name} ${currentPupilData.last_name}:`;
+    formContainer.appendChild(categorySelectSection);
+    
+    // Create modal dialog
+    const dialog = createModal('category-dialog', 'Add Category', formContainer, {
+      width: 400,
+      buttons: {
+        "Add Category": function() {
+          const selectedCategoryId = categorySelect.value;
+          
+          if (!selectedCategoryId) {
+            alert('Please select a category');
+            return;
+          }
+          
+          // Send API request to add category
+          fetch('/api/pupil-categories/assign-category', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              pupil_id: currentPupilData.pupil_id,
+              category_id: selectedCategoryId
+            })
+          })
+            .then(res => {
+              if (!res.ok) {
+                throw new Error('Failed to add category');
+              }
+              return res.json();
+            })
+            .then(() => {
+              // Close dialog and reload pupil profile
+              $(dialog).dialog('close');
+              loadPupilProfile(currentPupilData.pupil_id);
+            })
+            .catch(error => {
+              console.error('Error adding category:', error);
+              alert('Error adding category: ' + error.message);
+            });
+        },
+        "Cancel": function() {
+          $(dialog).dialog('close');
+        }
+      }
+    });
+    
+    // Create the category select
+    const categorySelect = document.createElement('select');
+    categorySelect.id = 'category-select';
+    categorySelect.style.width = '100%';
+    
+    // Add placeholder option
+    const placeholderOption = document.createElement('option');
+    placeholderOption.text = 'Select a category';
+    placeholderOption.value = '';
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    categorySelect.appendChild(placeholderOption);
+    
+    // Add select to container
+    dialog.querySelector('#category-select-container').appendChild(categorySelect);
+    
+    // Fetch categories
     fetch('/api/categories')
       .then(res => res.json())
       .then(categories => {
-        // Create a select for categories
-        const categorySelect = document.createElement('select');
-        categorySelect.id = 'category-select';
-        
-        // Add placeholder option
-        const placeholderOption = document.createElement('option');
-        placeholderOption.text = 'Select a category';
-        placeholderOption.value = '';
-        placeholderOption.disabled = true;
-        placeholderOption.selected = true;
-        categorySelect.appendChild(placeholderOption);
-        
-        // Add category options
-        categories.forEach(category => {
-          const option = document.createElement('option');
-          option.text = category.category_name;
-          option.value = category.category_id;
-          categorySelect.appendChild(option);
-        });
-        
-        // Create dialog
-        const dialog = document.createElement('div');
-        dialog.id = 'category-dialog';
-        dialog.title = 'Add Category';
-        dialog.innerHTML = `
-          <p>Add a category for ${currentPupilData.first_name} ${currentPupilData.last_name}:</p>
-          <div>
-            <label for="category-select">Category:</label>
-            <div id="category-select-container"></div>
-          </div>
-        `;
-        
-        // Add dialog to body
-        document.body.appendChild(dialog);
-        document.getElementById('category-select-container').appendChild(categorySelect);
-        
-        // Initialize dialog
-        $(dialog).dialog({
-          modal: true,
-          width: 400,
-          buttons: {
-            "Add Category": function() {
-              const selectedCategoryId = categorySelect.value;
-              
-              if (!selectedCategoryId) {
-                alert('Please select a category');
-                return;
-              }
-              
-              // Send API request to add category
-              fetch('/api/pupil-categories/assign-category', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  pupil_id: currentPupilData.pupil_id,
-                  category_id: selectedCategoryId
-                })
-              })
-                .then(res => {
-                  if (!res.ok) {
-                    throw new Error('Failed to add category');
-                  }
-                  return res.json();
-                })
-                .then(() => {
-                  // Close dialog - only remove the element after closing the dialog
-                  $(dialog).dialog('close');
-                  
-                  // Reload the pupil profile to get updated data
-                  loadPupilProfile(currentPupilData.pupil_id);
-                  
-                  // Remove the dialog from DOM after a short delay to ensure jQuery UI has finished with it
-                  setTimeout(() => {
-                    if (document.body.contains(dialog)) {
-                      document.body.removeChild(dialog);
-                    }
-                  }, 100);
-                })
-                .catch(error => {
-                  console.error('Error adding category:', error);
-                  alert('Error adding category: ' + error.message);
-                });
-            },
-            "Cancel": function() {
-              $(dialog).dialog('close');
-              // Remove the dialog from DOM after a short delay
-              setTimeout(() => {
-                if (document.body.contains(dialog)) {
-                  document.body.removeChild(dialog);
-                }
-              }, 100);
-            }
-          },
-          close: function() {
-            // Ensure cleanup on any close action (including clicking the X)
-            setTimeout(() => {
-              if (document.body.contains(dialog)) {
-                document.body.removeChild(dialog);
-              }
-            }, 100);
-          }
-        });
+        if (categories.length === 0) {
+          categorySelect.innerHTML = '<option value="">No categories available</option>';
+          categorySelect.disabled = true;
+        } else {
+          // Add category options
+          categories.forEach(category => {
+            const option = document.createElement('option');
+            option.text = category.category_name;
+            option.value = category.category_id;
+            categorySelect.appendChild(option);
+          });
+        }
       })
       .catch(error => {
         console.error('Error fetching categories:', error);
-        alert('Error fetching categories: ' + error.message);
+        categorySelect.innerHTML = '<option value="">Error loading categories</option>';
+        categorySelect.disabled = true;
       });
   }
   
@@ -995,91 +987,105 @@ document.addEventListener('DOMContentLoaded', function() {
    * @param {Object} override - The override to edit
    */
   function editOverride(override) {
-    // Create a dialog
-    const dialog = document.createElement('div');
-    dialog.className = 'modal-dialog';
-    dialog.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Edit Override</h3>
-          <button class="close-btn">&times;</button>
-        </div>
-        <div class="modal-body">
-          <p>Edit override for ${override.need_name}:</p>
-          <div class="form-group">
-            <label for="override-type">Type:</label>
-            <select id="override-type">
-              <option value="1" ${override.is_added ? 'selected' : ''}>Added</option>
-              <option value="0" ${!override.is_added ? 'selected' : ''}>Removed</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="override-notes">Notes:</label>
-            <textarea id="override-notes">${override.notes || ''}</textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="cancel-btn">Cancel</button>
-          <button class="confirm-btn">Save Changes</button>
-        </div>
-      </div>
+    // Create container for form elements
+    const formContainer = document.createElement('div');
+    formContainer.className = 'modal-form-container';
+    
+    // Create form sections
+    const typeSelectSection = document.createElement('div');
+    typeSelectSection.className = 'form-group';
+    typeSelectSection.innerHTML = `
+      <label for="override-type">Type:</label>
+      <div id="type-select-container"></div>
     `;
     
-    // Add the dialog to the body
-    document.body.appendChild(dialog);
+    const notesSection = document.createElement('div');
+    notesSection.className = 'form-group';
+    notesSection.innerHTML = `
+      <label for="override-notes">Notes:</label>
+      <div id="notes-container"></div>
+    `;
     
-    // Function to safely remove dialog
-    const removeDialog = () => {
-      // Check if dialog is still in the DOM
-      if (document.body.contains(dialog)) {
-        document.body.removeChild(dialog);
-      }
-    };
+    // Add form sections to container
+    formContainer.appendChild(document.createElement('p')).textContent = 
+      `Edit override for ${override.need_name}:`;
+    formContainer.appendChild(typeSelectSection);
+    formContainer.appendChild(notesSection);
     
-    // Set up event listeners
-    const closeBtn = dialog.querySelector('.close-btn');
-    const cancelBtn = dialog.querySelector('.cancel-btn');
-    const confirmBtn = dialog.querySelector('.confirm-btn');
-    const typeSelect = dialog.querySelector('#override-type');
-    const notesTextarea = dialog.querySelector('#override-notes');
-    
-    closeBtn.addEventListener('click', removeDialog);
-    
-    cancelBtn.addEventListener('click', removeDialog);
-    
-    confirmBtn.addEventListener('click', () => {
-      const isAdded = typeSelect.value === '1';
-      const notes = notesTextarea.value.trim();
-      
-      // Update the override
-      fetch(`/api/pupil-categories/need-override/${override.override_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          is_added: isAdded,
-          notes: notes
-        })
-      })
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Failed to update override');
-          }
-          return res.json();
-        })
-        .then(() => {
-          // Remove the dialog
-          removeDialog();
+    // Create modal dialog
+    const dialog = createModal('edit-override-dialog', 'Edit Override', formContainer, {
+      width: 500,
+      buttons: {
+        "Save Changes": function() {
+          const isAdded = typeSelect.value === '1';
+          const notes = notesTextarea.value.trim();
           
-          // Reload the pupil profile to get updated data
-          loadPupilProfile(currentPupilData.pupil_id);
-        })
-        .catch(error => {
-          console.error('Error updating override:', error);
-          alert('Error updating override: ' + error.message);
-        });
+          if (!notes) {
+            alert('Please provide notes for this override');
+            return;
+          }
+          
+          // Update the override
+          fetch(`/api/pupil-categories/need-override/${override.override_id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              is_added: isAdded,
+              notes: notes
+            })
+          })
+            .then(res => {
+              if (!res.ok) {
+                throw new Error('Failed to update override');
+              }
+              return res.json();
+            })
+            .then(() => {
+              // Close dialog and reload pupil profile
+              $(dialog).dialog('close');
+              loadPupilProfile(currentPupilData.pupil_id);
+            })
+            .catch(error => {
+              console.error('Error updating override:', error);
+              alert('Error updating override: ' + error.message);
+            });
+        },
+        "Cancel": function() {
+          $(dialog).dialog('close');
+        }
+      }
     });
+    
+    // Create form elements
+    const typeSelect = document.createElement('select');
+    typeSelect.id = 'override-type';
+    typeSelect.style.width = '100%';
+    
+    // Add options
+    const addOption = document.createElement('option');
+    addOption.value = '1';
+    addOption.text = 'Added';
+    addOption.selected = override.is_added;
+    typeSelect.appendChild(addOption);
+    
+    const removeOption = document.createElement('option');
+    removeOption.value = '0';
+    removeOption.text = 'Removed';
+    removeOption.selected = !override.is_added;
+    typeSelect.appendChild(removeOption);
+    
+    // Create textarea for notes
+    const notesTextarea = document.createElement('textarea');
+    notesTextarea.id = 'override-notes';
+    notesTextarea.value = override.notes || '';
+    notesTextarea.rows = 4;
+    notesTextarea.style.width = '100%';
+    
+    // Add elements to their containers
+    dialog.querySelector('#type-select-container').appendChild(typeSelect);
+    dialog.querySelector('#notes-container').appendChild(notesTextarea);
   }
   
   /**
@@ -1117,187 +1123,183 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if a pupil is selected
     if (!currentPupilData) return;
     
-    // Fetch all needs
+    // Create container for form elements
+    const formContainer = document.createElement('div');
+    formContainer.className = 'modal-form-container';
+    
+    // Create form sections
+    const needSelectSection = document.createElement('div');
+    needSelectSection.className = 'form-group';
+    needSelectSection.innerHTML = `
+      <label for="need-select">Need:</label>
+      <div id="need-select-container"></div>
+    `;
+    
+    const radioSection = document.createElement('div');
+    radioSection.className = 'form-group';
+    radioSection.innerHTML = `
+      <label>Override Type:</label>
+      <div id="radio-container"></div>
+    `;
+    
+    const notesSection = document.createElement('div');
+    notesSection.className = 'form-group';
+    notesSection.innerHTML = `
+      <label for="override-notes">Notes:</label>
+      <div id="notes-container"></div>
+    `;
+    
+    // Add form sections to container
+    formContainer.appendChild(document.createElement('p')).textContent = 
+      `Add a need override for ${currentPupilData.first_name} ${currentPupilData.last_name}:`;
+    formContainer.appendChild(needSelectSection);
+    formContainer.appendChild(radioSection);
+    formContainer.appendChild(notesSection);
+    
+    // Create modal dialog
+    const dialog = createModal('override-dialog', 'Add Need Override', formContainer, {
+      width: 500,
+      buttons: {
+        "Add Override": function() {
+          const selectedNeedId = needSelect.value;
+          const isAdded = addRadio.checked;
+          const notes = notesTextarea.value.trim();
+          
+          if (!selectedNeedId) {
+            alert('Please select a need');
+            return;
+          }
+          
+          if (!notes) {
+            alert('Please provide a reason for this override');
+            return;
+          }
+          
+          // Send API request to add override
+          fetch('/api/pupil-categories/need-override', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              pupil_id: currentPupilData.pupil_id,
+              need_id: selectedNeedId,
+              is_added: isAdded,
+              notes: notes
+            })
+          })
+            .then(res => {
+              if (!res.ok) {
+                throw new Error('Failed to add override');
+              }
+              return res.json();
+            })
+            .then(() => {
+              // Close dialog and reload pupil profile
+              $(dialog).dialog('close');
+              loadPupilProfile(currentPupilData.pupil_id);
+            })
+            .catch(error => {
+              console.error('Error adding override:', error);
+              alert('Error adding override: ' + error.message);
+            });
+        },
+        "Cancel": function() {
+          $(dialog).dialog('close');
+        }
+      }
+    });
+    
+    // Create form elements
+    const needSelect = document.createElement('select');
+    needSelect.id = 'need-select';
+    needSelect.style.width = '100%';
+    
+    // Add placeholder option for needs
+    const placeholderOption = document.createElement('option');
+    placeholderOption.text = 'Select a need';
+    placeholderOption.value = '';
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    needSelect.appendChild(placeholderOption);
+    
+    // Create radio buttons for add/remove
+    const radioContainer = document.createElement('div');
+    radioContainer.className = 'override-type-container';
+    
+    // Radio container div for add option
+    const addRadioContainer = document.createElement('div');
+    addRadioContainer.className = 'radio-option';
+    
+    const addRadio = document.createElement('input');
+    addRadio.type = 'radio';
+    addRadio.id = 'override-add';
+    addRadio.name = 'override-type';
+    addRadio.value = 'add';
+    addRadio.checked = true;
+    
+    const addLabel = document.createElement('label');
+    addLabel.htmlFor = 'override-add';
+    addLabel.textContent = 'Add need';
+    
+    addRadioContainer.appendChild(addRadio);
+    addRadioContainer.appendChild(addLabel);
+    
+    // Radio container div for remove option
+    const removeRadioContainer = document.createElement('div');
+    removeRadioContainer.className = 'radio-option';
+    
+    const removeRadio = document.createElement('input');
+    removeRadio.type = 'radio';
+    removeRadio.id = 'override-remove';
+    removeRadio.name = 'override-type';
+    removeRadio.value = 'remove';
+    
+    const removeLabel = document.createElement('label');
+    removeLabel.htmlFor = 'override-remove';
+    removeLabel.textContent = 'Remove need';
+    
+    removeRadioContainer.appendChild(removeRadio);
+    removeRadioContainer.appendChild(removeLabel);
+    
+    // Add both options to the main container
+    radioContainer.appendChild(addRadioContainer);
+    radioContainer.appendChild(removeRadioContainer);
+    
+    // Create a textarea for notes
+    const notesTextarea = document.createElement('textarea');
+    notesTextarea.id = 'override-notes';
+    notesTextarea.placeholder = 'Reason for this override (required)';
+    notesTextarea.rows = 4;
+    notesTextarea.required = true;
+    notesTextarea.style.width = '100%';
+    
+    // Add elements to their containers
+    dialog.querySelector('#need-select-container').appendChild(needSelect);
+    dialog.querySelector('#radio-container').appendChild(radioContainer);
+    dialog.querySelector('#notes-container').appendChild(notesTextarea);
+    
+    // Fetch needs
     fetch('/api/needs')
       .then(res => res.json())
       .then(needs => {
-        // Create a select for needs
-        const needSelect = document.createElement('select');
-        needSelect.id = 'need-select';
-        
-        // Add placeholder option
-        const placeholderOption = document.createElement('option');
-        placeholderOption.text = 'Select a need';
-        placeholderOption.value = '';
-        placeholderOption.disabled = true;
-        placeholderOption.selected = true;
-        needSelect.appendChild(placeholderOption);
-        
-        // Add need options
-        needs.forEach(need => {
-          const option = document.createElement('option');
-          option.text = need.name;
-          option.value = need.need_id;
-          needSelect.appendChild(option);
-        });
-        
-        // Create radio buttons for add/remove
-        const radioContainer = document.createElement('div');
-        radioContainer.className = 'override-type-container';
-        
-        // Radio container div for add option
-        const addRadioContainer = document.createElement('div');
-        addRadioContainer.className = 'radio-option';
-        
-        const addRadio = document.createElement('input');
-        addRadio.type = 'radio';
-        addRadio.id = 'override-add';
-        addRadio.name = 'override-type';
-        addRadio.value = 'add';
-        addRadio.checked = true;
-        
-        const addLabel = document.createElement('label');
-        addLabel.htmlFor = 'override-add';
-        addLabel.textContent = 'Add need';
-        
-        addRadioContainer.appendChild(addRadio);
-        addRadioContainer.appendChild(addLabel);
-        
-        // Radio container div for remove option
-        const removeRadioContainer = document.createElement('div');
-        removeRadioContainer.className = 'radio-option';
-        
-        const removeRadio = document.createElement('input');
-        removeRadio.type = 'radio';
-        removeRadio.id = 'override-remove';
-        removeRadio.name = 'override-type';
-        removeRadio.value = 'remove';
-        
-        const removeLabel = document.createElement('label');
-        removeLabel.htmlFor = 'override-remove';
-        removeLabel.textContent = 'Remove need';
-        
-        removeRadioContainer.appendChild(removeRadio);
-        removeRadioContainer.appendChild(removeLabel);
-        
-        // Add both options to the main container
-        radioContainer.appendChild(addRadioContainer);
-        radioContainer.appendChild(removeRadioContainer);
-        
-        // Create a textarea for notes
-        const notesTextarea = document.createElement('textarea');
-        notesTextarea.id = 'override-notes';
-        notesTextarea.placeholder = 'Reason for this override (required)';
-        notesTextarea.rows = 4;
-        notesTextarea.required = true;
-        
-        // Create dialog
-        const dialog = document.createElement('div');
-        dialog.id = 'override-dialog';
-        dialog.title = 'Add Need Override';
-        dialog.innerHTML = `
-          <p>Add a need override for ${currentPupilData.first_name} ${currentPupilData.last_name}:</p>
-          <div>
-            <label for="need-select">Need:</label>
-            <div id="need-select-container"></div>
-          </div>
-          <div style="margin-top: 15px;">
-            <label>Override Type:</label>
-            <div id="radio-container"></div>
-          </div>
-          <div style="margin-top: 15px;">
-            <label for="override-notes">Notes:</label>
-            <div id="notes-container"></div>
-          </div>
-        `;
-        
-        // Add dialog to body
-        document.body.appendChild(dialog);
-        document.getElementById('need-select-container').appendChild(needSelect);
-        document.getElementById('radio-container').appendChild(radioContainer);
-        document.getElementById('notes-container').appendChild(notesTextarea);
-        
-        // Initialize dialog
-        $(dialog).dialog({
-          modal: true,
-          width: 500,
-          buttons: {
-            "Add Override": function() {
-              const selectedNeedId = needSelect.value;
-              const isAdded = addRadio.checked;
-              const notes = notesTextarea.value.trim();
-              
-              if (!selectedNeedId) {
-                alert('Please select a need');
-                return;
-              }
-              
-              if (!notes) {
-                alert('Please provide a reason for this override');
-                return;
-              }
-              
-              // Send API request to add override
-              fetch('/api/pupil-categories/need-override', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  pupil_id: currentPupilData.pupil_id,
-                  need_id: selectedNeedId,
-                  is_added: isAdded,
-                  notes: notes
-                })
-              })
-                .then(res => {
-                  if (!res.ok) {
-                    throw new Error('Failed to add override');
-                  }
-                  return res.json();
-                })
-                .then(() => {
-                  // Close dialog
-                  $(dialog).dialog('close');
-                  
-                  // Reload the pupil profile to get updated data
-                  loadPupilProfile(currentPupilData.pupil_id);
-                  
-                  // Remove the dialog from DOM after a short delay
-                  setTimeout(() => {
-                    if (document.body.contains(dialog)) {
-                      document.body.removeChild(dialog);
-                    }
-                  }, 100);
-                })
-                .catch(error => {
-                  console.error('Error adding override:', error);
-                  alert('Error adding override: ' + error.message);
-                });
-            },
-            "Cancel": function() {
-              $(dialog).dialog('close');
-              // Remove the dialog from DOM after a short delay
-              setTimeout(() => {
-                if (document.body.contains(dialog)) {
-                  document.body.removeChild(dialog);
-                }
-              }, 100);
-            }
-          },
-          close: function() {
-            // Ensure cleanup on any close action (including clicking the X)
-            setTimeout(() => {
-              if (document.body.contains(dialog)) {
-                document.body.removeChild(dialog);
-              }
-            }, 100);
-          }
-        });
+        if (needs.length === 0) {
+          needSelect.innerHTML = '<option value="">No needs available</option>';
+          needSelect.disabled = true;
+        } else {
+          // Add need options
+          needs.forEach(need => {
+            const option = document.createElement('option');
+            option.text = need.name;
+            option.value = need.need_id;
+            needSelect.appendChild(option);
+          });
+        }
       })
       .catch(error => {
         console.error('Error fetching needs:', error);
-        alert('Error fetching needs: ' + error.message);
+        needSelect.innerHTML = '<option value="">Error loading needs</option>';
+        needSelect.disabled = true;
       });
   }
   
@@ -1316,6 +1318,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(res => {
           if (!res.ok) {
             throw new Error('Failed to remove device assignment');
+          }
+          // Check if there's content to parse
+          if (res.status === 204) {
+            return {}; // Return empty object for 204 No Content
           }
           return res.json();
         })
@@ -1337,190 +1343,181 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if a pupil is selected
     if (!currentPupilData) return;
     
-    // Fetch all devices that are not assigned to a pupil
+    // Create container for the form elements
+    const formContainer = document.createElement('div');
+    formContainer.className = 'modal-form-container';
+    
+    // Create the form sections
+    const needSelectSection = document.createElement('div');
+    needSelectSection.className = 'form-group';
+    needSelectSection.innerHTML = `
+      <label for="need-select">For Need:</label>
+      <div id="need-select-container" style="margin-bottom: 15px;"></div>
+    `;
+    
+    const deviceSelectSection = document.createElement('div');
+    deviceSelectSection.className = 'form-group';
+    deviceSelectSection.innerHTML = `
+      <label for="device-select">Device:</label>
+      <div id="device-select-container" style="margin-bottom: 15px;"></div>
+    `;
+    
+    const notesSection = document.createElement('div');
+    notesSection.className = 'form-group';
+    notesSection.innerHTML = `
+      <label for="device-notes">Notes:</label>
+      <div id="notes-container"></div>
+    `;
+    
+    // Add form sections to container
+    formContainer.appendChild(document.createElement('p')).textContent = 
+      `Assign a device to ${currentPupilData.first_name} ${currentPupilData.last_name}:`;
+    formContainer.appendChild(needSelectSection);
+    formContainer.appendChild(deviceSelectSection);
+    formContainer.appendChild(notesSection);
+    
+    // Create modal dialog
+    const dialog = createModal('device-dialog', 'Assign Device', formContainer, {
+      width: 500,
+      buttons: {
+        "Assign Device": function() {
+          const selectedDeviceId = deviceSelect.value;
+          const selectedNeedId = needSelect.value;
+          const notes = notesField.value;
+          
+          if (!selectedNeedId) {
+            alert('Please select a need');
+            return;
+          }
+          
+          if (!selectedDeviceId) {
+            alert('Please select a device');
+            return;
+          }
+          
+          // Send API request to assign device to need
+          fetch('/api/devices/need/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              need_id: selectedNeedId,
+              device_id: selectedDeviceId,
+              notes: notes
+            })
+          })
+            .then(res => {
+              if (!res.ok) {
+                throw new Error('Failed to assign device');
+              }
+              return res.json();
+            })
+            .then(() => {
+              // Close dialog
+              $(dialog).dialog('close');
+              
+              // Reload the pupil profile to get updated data
+              loadPupilProfile(currentPupilData.pupil_id);
+            })
+            .catch(error => {
+              console.error('Error assigning device:', error);
+              alert('Error assigning device: ' + error.message);
+            });
+        },
+        "Cancel": function() {
+          $(dialog).dialog('close');
+        }
+      }
+    });
+    
+    // Create needed form elements
+    const needSelect = document.createElement('select');
+    const deviceSelect = document.createElement('select');
+    const notesField = document.createElement('textarea');
+    
+    // Configure need select
+    needSelect.id = 'need-select';
+    needSelect.required = true;
+    needSelect.style.width = '100%';
+    
+    // Add placeholder option for needs
+    const needPlaceholder = document.createElement('option');
+    needPlaceholder.text = 'Select a need';
+    needPlaceholder.value = '';
+    needPlaceholder.disabled = true;
+    needPlaceholder.selected = true;
+    needSelect.appendChild(needPlaceholder);
+    
+    // Configure device select
+    deviceSelect.id = 'device-select';
+    deviceSelect.required = true;
+    deviceSelect.style.width = '100%';
+    
+    // Add placeholder option for devices
+    const devicePlaceholder = document.createElement('option');
+    devicePlaceholder.text = 'Select a device';
+    devicePlaceholder.value = '';
+    devicePlaceholder.disabled = true;
+    devicePlaceholder.selected = true;
+    deviceSelect.appendChild(devicePlaceholder);
+    
+    // Configure notes field
+    notesField.id = 'device-notes';
+    notesField.placeholder = 'Enter notes about this assignment (optional)';
+    notesField.rows = 3;
+    notesField.style.width = '100%';
+    
+    // Add elements to their containers
+    dialog.querySelector('#need-select-container').appendChild(needSelect);
+    dialog.querySelector('#device-select-container').appendChild(deviceSelect);
+    dialog.querySelector('#notes-container').appendChild(notesField);
+    
+    // Fetch pupil's effective needs
+    fetch(`/api/pupil-categories/${currentPupilData.pupil_id}/effective-needs`)
+      .then(res => res.json())
+      .then(needs => {
+        if (!needs || needs.length === 0) {
+          // If no needs found, disable the need select
+          needSelect.innerHTML = '<option value="">No needs available</option>';
+          needSelect.disabled = true;
+        } else {
+          // Add needs to the dropdown
+          needs.forEach(need => {
+            const option = document.createElement('option');
+            option.text = need.name;
+            option.value = need.need_id;
+            needSelect.appendChild(option);
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching pupil effective needs:', error);
+        needSelect.innerHTML = '<option value="">Error loading needs</option>';
+        needSelect.disabled = true;
+      });
+    
+    // Fetch devices
     fetch('/api/devices')
       .then(res => res.json())
       .then(devices => {
         if (devices.length === 0) {
-          alert('No available devices found. Please add more devices to the system.');
-          return;
-        }
-        
-        // Create a select for devices
-        const deviceSelect = document.createElement('select');
-        deviceSelect.id = 'device-select';
-        deviceSelect.required = true;
-        deviceSelect.style.width = '100%';
-        
-        // Add placeholder option
-        const placeholderOption = document.createElement('option');
-        placeholderOption.text = 'Select a device';
-        placeholderOption.value = '';
-        placeholderOption.disabled = true;
-        placeholderOption.selected = true;
-        deviceSelect.appendChild(placeholderOption);
-        
-        // Add device options
-        devices.forEach(device => {
-          const option = document.createElement('option');
-          option.text = `${device.name || device.device_name} - ${device.model || 'No model'} (${device.serial_number || 'No S/N'})`;
-          option.value = device.device_id;
-          deviceSelect.appendChild(option);
-        });
-        
-        // Create need selection
-        const needSelect = document.createElement('select');
-        needSelect.id = 'need-select';
-        needSelect.required = true;
-        needSelect.style.width = '100%';
-        
-        // Add placeholder option for needs
-        const needPlaceholder = document.createElement('option');
-        needPlaceholder.text = 'Select a need';
-        needPlaceholder.value = '';
-        needPlaceholder.disabled = true;
-        needPlaceholder.selected = true;
-        needSelect.appendChild(needPlaceholder);
-        
-        // Fetch pupil's effective needs
-        fetch(`/api/pupil-categories/${currentPupilData.pupil_id}/effective-needs`)
-          .then(res => res.json())
-          .then(needs => {
-            if (!needs || needs.length === 0) {
-              // If no needs found, disable the need select
-              needSelect.innerHTML = '<option value="">No needs available</option>';
-              needSelect.disabled = true;
-            } else {
-              // Add needs to the dropdown
-              needs.forEach(need => {
-                const option = document.createElement('option');
-                option.text = need.name;
-                option.value = need.need_id;
-                needSelect.appendChild(option);
-              });
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching pupil effective needs:', error);
-            needSelect.innerHTML = '<option value="">Error loading needs</option>';
-            needSelect.disabled = true;
+          deviceSelect.innerHTML = '<option value="">No available devices</option>';
+          deviceSelect.disabled = true;
+        } else {
+          // Add device options
+          devices.forEach(device => {
+            const option = document.createElement('option');
+            option.text = `${device.name || device.device_name} - ${device.model || 'No model'} (${device.serial_number || 'No S/N'})`;
+            option.value = device.device_id;
+            deviceSelect.appendChild(option);
           });
-        
-        // Create notes field
-        const notesField = document.createElement('textarea');
-        notesField.id = 'device-notes';
-        notesField.placeholder = 'Enter notes about this assignment (optional)';
-        notesField.rows = 3;
-        notesField.style.width = '100%';
-        
-        // Create dialog
-        const dialog = document.createElement('div');
-        dialog.id = 'device-dialog';
-        dialog.title = 'Assign Device';
-        dialog.innerHTML = `
-          <p>Assign a device to ${currentPupilData.first_name} ${currentPupilData.last_name}:</p>
-          <div class="form-group">
-            <label for="need-select">For Need:</label>
-            <div id="need-select-container" style="margin-bottom: 15px;"></div>
-          </div>
-          <div class="form-group">
-            <label for="device-select">Device:</label>
-            <div id="device-select-container" style="margin-bottom: 15px;"></div>
-          </div>
-          <div class="form-group">
-            <label for="device-notes">Notes:</label>
-            <div id="notes-container"></div>
-          </div>
-        `;
-        
-        // Add dialog to body
-        document.body.appendChild(dialog);
-        
-        // Add elements to their containers after the dialog is added to the DOM
-        document.getElementById('need-select-container').appendChild(needSelect);
-        document.getElementById('device-select-container').appendChild(deviceSelect);
-        document.getElementById('notes-container').appendChild(notesField);
-        
-        // Initialize dialog
-        $(dialog).dialog({
-          modal: true,
-          width: 500,
-          buttons: {
-            "Assign Device": function() {
-              const selectedDeviceId = deviceSelect.value;
-              const selectedNeedId = needSelect.value;
-              const notes = notesField.value;
-              
-              if (!selectedNeedId) {
-                alert('Please select a need');
-                return;
-              }
-              
-              if (!selectedDeviceId) {
-                alert('Please select a device');
-                return;
-              }
-              
-              // Send API request to assign device to need
-              fetch('/api/devices/need/', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  need_id: selectedNeedId,
-                  device_id: selectedDeviceId,
-                  notes: notes
-                })
-              })
-                .then(res => {
-                  if (!res.ok) {
-                    throw new Error('Failed to assign device');
-                  }
-                  return res.json();
-                })
-                .then(() => {
-                  // Close dialog
-                  $(dialog).dialog('close');
-                  
-                  // Reload the pupil profile to get updated data
-                  loadPupilProfile(currentPupilData.pupil_id);
-                  
-                  // Remove the dialog from DOM after a short delay
-                  setTimeout(() => {
-                    if (document.body.contains(dialog)) {
-                      document.body.removeChild(dialog);
-                    }
-                  }, 100);
-                })
-                .catch(error => {
-                  console.error('Error assigning device:', error);
-                  alert('Error assigning device: ' + error.message);
-                });
-            },
-            "Cancel": function() {
-              $(dialog).dialog('close');
-              // Remove the dialog from DOM after a short delay
-              setTimeout(() => {
-                if (document.body.contains(dialog)) {
-                  document.body.removeChild(dialog);
-                }
-              }, 100);
-            }
-          },
-          close: function() {
-            // Ensure cleanup on any close action (including clicking the X)
-            setTimeout(() => {
-              if (document.body.contains(dialog)) {
-                document.body.removeChild(dialog);
-              }
-            }, 100);
-          }
-        });
+        }
       })
       .catch(error => {
         console.error('Error fetching available devices:', error);
-        alert('Error fetching available devices: ' + error.message);
+        deviceSelect.innerHTML = '<option value="">Error loading devices</option>';
+        deviceSelect.disabled = true;
       });
   }
 }); 
@@ -1531,3 +1528,60 @@ document.addEventListener('DOMContentLoaded', function() {
 // - Categories: /api/pupil-categories/assign-category (POST), /api/pupil-categories/:pupilId/categories/:categoryId (DELETE)
 // - Need Overrides: /api/pupil-categories/need-override (POST), /api/pupil-categories/need-override/:overrideId (DELETE)
 // - Devices: /api/devices/need/ (POST), /api/devices/need/:needId/device/:deviceId (DELETE) 
+
+/**
+ * Create and manage a dialog modal with proper cleanup
+ * @param {string} id - ID for the dialog element
+ * @param {string} title - Title for the dialog
+ * @param {string|HTMLElement} content - HTML content or element for the dialog body
+ * @param {Object} options - Dialog options including buttons, width, etc.
+ * @return {HTMLElement} - The created dialog element
+ */
+function createModal(id, title, content, options = {}) {
+  // Remove any existing dialog with the same ID
+  const existingDialog = document.getElementById(id);
+  if (existingDialog) {
+    if ($.data(existingDialog, 'ui-dialog')) {
+      $(existingDialog).dialog('destroy');
+    }
+    existingDialog.remove();
+  }
+  
+  // Create new dialog
+  const dialog = document.createElement('div');
+  dialog.id = id;
+  dialog.title = title;
+  
+  // Add content
+  if (typeof content === 'string') {
+    dialog.innerHTML = content;
+  } else if (content instanceof HTMLElement) {
+    dialog.appendChild(content);
+  }
+  
+  // Add dialog to body
+  document.body.appendChild(dialog);
+  
+  // Default dialog options
+  const defaultOptions = {
+    modal: true,
+    width: 500,
+    autoOpen: true,
+    close: function() {
+      // Ensure the dialog is completely removed when closed
+      setTimeout(() => {
+        if (document.body.contains(dialog)) {
+          if ($.data(dialog, 'ui-dialog')) {
+            $(dialog).dialog('destroy');
+          }
+          document.body.removeChild(dialog);
+        }
+      }, 100);
+    }
+  };
+  
+  // Initialize with combined options
+  $(dialog).dialog({...defaultOptions, ...options});
+  
+  return dialog;
+} 

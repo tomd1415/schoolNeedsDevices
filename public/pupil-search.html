@@ -54,7 +54,15 @@
       <!-- Action buttons, only visible on screen -->
       <div class="print-controls screen-only">
         <div class="action-buttons">
-          <button id="edit-toggle" class="action-button"><i class="fas fa-edit"></i> Edit Mode</button>
+          <div class="toggle-wrapper">
+            <label for="edit-toggle" class="toggle-label">Edit Mode</label>
+            <div class="toggle-switch-container">
+              <input type="checkbox" id="edit-toggle" class="toggle-input">
+              <label for="edit-toggle" class="toggle-switch">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
           <button id="print-btn" class="action-button"><i class="fas fa-print"></i> Print Profile</button>
         </div>
       </div>
