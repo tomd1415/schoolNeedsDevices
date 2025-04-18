@@ -47,6 +47,9 @@ const FormValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const formNameInput = form.querySelector('[name="form_name"]');
     const formYearInput = form.querySelector('[name="form_year"]');

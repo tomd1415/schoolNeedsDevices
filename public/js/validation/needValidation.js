@@ -47,6 +47,9 @@ const NeedValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const needNameInput = form.querySelector('[name="need_name"]');
     const shortDescInput = form.querySelector('[name="need_short_desc"]');

@@ -47,6 +47,9 @@ const PupilNeedValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const categorySelect = form.querySelector('[name="category_id"]');
     
@@ -99,6 +102,9 @@ const PupilNeedValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const needSelect = form.querySelector('[name="need_id"]');
     
@@ -150,6 +156,9 @@ const PupilNeedValidation = (function() {
       console.error(`Form with ID ${formId} not found`);
       return;
     }
+
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
 
     // Get form elements
     const needSelect = form.querySelector('[name="need_id"]');
@@ -210,6 +219,11 @@ const PupilNeedValidation = (function() {
         validatePupilSelection,
         'Please select a pupil'
       );
+      
+      // Update submit button states in any forms that might contain this select
+      if (this.form) {
+        utils.updateSubmitButtonState(this.form);
+      }
     });
   }
   

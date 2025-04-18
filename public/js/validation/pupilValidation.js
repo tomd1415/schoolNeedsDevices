@@ -47,6 +47,9 @@ const PupilValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const firstNameInput = form.querySelector('[name="first_name"]');
     const lastNameInput = form.querySelector('[name="last_name"]');

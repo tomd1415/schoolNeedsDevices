@@ -57,6 +57,9 @@ const NeedDeviceValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const pupilSelect = form.querySelector('[name="pupil_id"]');
     const needSelect = form.querySelector('[name="need_id"]');

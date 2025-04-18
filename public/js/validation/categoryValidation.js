@@ -37,6 +37,9 @@ const CategoryValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const categoryNameInput = form.querySelector('[name="category_name"]');
     const descriptionInput = form.querySelector('[name="description"]');

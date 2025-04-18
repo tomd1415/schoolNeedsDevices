@@ -57,6 +57,9 @@ const DeviceValidation = (function() {
       return;
     }
 
+    // Initialize form validation and submit button state
+    utils.initializeForm(formId);
+
     // Get form elements
     const deviceNameInput = form.querySelector('[name="device_name"]');
     const modelInput = form.querySelector('[name="model"]');

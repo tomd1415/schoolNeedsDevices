@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pupil Search & Profile - Exhall Grange School</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/validation.css">
+  <link rel="stylesheet" href="css/pupil-search.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- jQuery UI for autocomplete -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Pupil Profile Search</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="pupils.html">Pupils</a></li>
+      <li><a href="forms.html">Forms</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="needs.html">Needs</a></li>
+      <li><a href="devices.html">Devices</a></li>
+      <li><a href="pupil-needs.html">Assign Needs</a></li>
+      <li><a href="need-devices.html">Assign Devices</a></li>
+      <li><a href="pupil-search.html" class="active">Pupil Search</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="search-section" class="card">
+      <div class="search-header">
+        <h2><i class="fas fa-search"></i> Find a Pupil</h2>
+      </div>
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <input type="text" id="pupil-search" placeholder="Start typing a pupil's name..." autocomplete="off">
+          <button id="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+        <p class="search-tip">Start typing a pupil's first or last name</p>
+      </div>
+    </section>
+
+    <div id="profile-content" style="display: none;">
+      <!-- Print button, only visible on screen -->
+      <div class="print-controls screen-only">
+        <button id="print-btn" class="action-button"><i class="fas fa-print"></i> Print Profile</button>
+      </div>
+
+      <!-- Pupil header info -->
+      <section id="pupil-header" class="card profile-section">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <div class="profile-basic-info">
+            <h2 id="pupil-full-name"></h2>
+            <div class="profile-meta">
+              <span id="pupil-form-badge" class="badge"></span>
+              <span id="pupil-id-badge" class="badge subtle"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pupil details -->
+      <section id="pupil-details" class="card profile-section">
+        <div class="section-header">
+          <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+        </div>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">First Name</span>
+            <span id="pupil-first-name" class="detail-value"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Last Name</span>
+            <span id="pupil-last-name" class="detail-value"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Form Group</span>
+            <span id="pupil-form-name" class="detail-value"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Year</span>
+            <span id="pupil-year" class="detail-value"></span>
+          </div>
+          <div class="detail-item full-width">
+            <span class="detail-label">Notes</span>
+            <span id="pupil-notes" class="detail-value"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Categories section -->
+      <section id="categories-section" class="card profile-section">
+        <div class="section-header">
+          <h3><i class="fas fa-tags"></i> Assigned Categories</h3>
+        </div>
+        <div id="categories-container" class="tags-container">
+          <!-- Categories will be added here dynamically -->
+          <p id="no-categories-message" class="no-data-message">No categories assigned to this pupil.</p>
+        </div>
+      </section>
+
+      <!-- Needs section -->
+      <div class="two-column-grid">
+        <section id="needs-section" class="card profile-section">
+          <div class="section-header">
+            <h3><i class="fas fa-list-check"></i> Effective Needs</h3>
+          </div>
+          <div id="needs-container">
+            <div class="table-container">
+              <table id="needs-table" class="data-table">
+                <thead>
+                  <tr>
+                    <th>Need</th>
+                    <th>Source</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Needs will be added here dynamically -->
+                </tbody>
+              </table>
+            </div>
+            <p id="no-needs-message" class="no-data-message">No needs assigned to this pupil.</p>
+          </div>
+        </section>
+
+        <!-- Overrides section -->
+        <section id="overrides-section" class="card profile-section">
+          <div class="section-header">
+            <h3><i class="fas fa-edit"></i> Need Overrides</h3>
+          </div>
+          <div id="overrides-container">
+            <div class="table-container">
+              <table id="overrides-table" class="data-table">
+                <thead>
+                  <tr>
+                    <th>Need</th>
+                    <th>Type</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Overrides will be added here dynamically -->
+                </tbody>
+              </table>
+            </div>
+            <p id="no-overrides-message" class="no-data-message">No need overrides for this pupil.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Devices section -->
+      <section id="devices-section" class="card profile-section page-break-before">
+        <div class="section-header">
+          <h3><i class="fas fa-laptop"></i> Assigned Devices</h3>
+        </div>
+        <div id="devices-container">
+          <div class="table-container">
+            <table id="devices-table" class="data-table">
+              <thead>
+                <tr>
+                  <th>Device</th>
+                  <th>For Need</th>
+                  <th>Model</th>
+                  <th>Serial Number</th>
+                  <th>Assignment Date</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Devices will be added here dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <p id="no-devices-message" class="no-data-message">No devices assigned to this pupil.</p>
+        </div>
+      </section>
+
+      <!-- Footer with timestamp -->
+      <section id="profile-footer" class="profile-section print-only">
+        <div class="footer-content">
+          <p>Generated on <span id="timestamp"></span></p>
+          <p>Exhall Grange School - Pupil Needs Devices System</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/pupil-search.js"></script>
+</body>
+</html> 

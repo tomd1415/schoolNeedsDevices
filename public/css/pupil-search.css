@@ -1,0 +1,473 @@
+/* Pupil Search & Profile Styles */
+
+:root {
+  --primary-color: #4b70e2;
+  --primary-light: #eef2ff;
+  --primary-dark: #305099;
+  --secondary-color: #3ec2c9;
+  --secondary-light: #e5f7f8;
+  --accent-color: #ff9e44;
+  --accent-light: #fff4e9;
+  --dark-color: #333333;
+  --light-color: #ffffff;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-400: #ced4da;
+  --gray-500: #adb5bd;
+  --gray-600: #6c757d;
+  --gray-700: #495057;
+  --gray-800: #343a40;
+  --success-color: #4CAF50;
+  --warning-color: #FFC107;
+  --danger-color: #e74c3c;
+  --info-color: #5bc0de;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Overall layout for the pupil search page */
+body {
+  background-color: #f0f2f5;
+  color: var(--dark-color);
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Card styling */
+.card {
+  background: var(--light-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 25px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Section styling */
+.section-header {
+  background-color: var(--primary-light);
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--gray-300);
+}
+
+.section-header h3 {
+  margin: 0;
+  color: var(--primary-dark);
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.section-header h3 i {
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+.profile-section {
+  margin-bottom: 30px;
+}
+
+/* Search Section Styling */
+#search-section {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+  padding: 30px;
+  text-align: center;
+  border-top: 5px solid var(--primary-color);
+}
+
+.search-header h2 {
+  font-size: 2rem;
+  color: var(--primary-dark);
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+.search-header h2 i {
+  color: var(--primary-color);
+  margin-right: 10px;
+}
+
+.search-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input-wrapper {
+  display: flex;
+  position: relative;
+  border-radius: 50px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#pupil-search {
+  flex: 1;
+  padding: 15px 25px;
+  font-size: 1.1rem;
+  border: none;
+  outline: none;
+}
+
+#search-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0 25px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#search-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+.search-tip {
+  margin-top: 15px;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+/* Autocomplete Styling */
+.ui-autocomplete {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-300);
+}
+
+.ui-menu-item {
+  padding: 10px 15px;
+  transition: var(--transition);
+}
+
+.ui-menu-item:hover {
+  background-color: var(--primary-light);
+}
+
+.ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  margin: 0;
+}
+
+/* Profile Header Styling */
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 25px 30px;
+  background: linear-gradient(to right, var(--primary-light), var(--secondary-light));
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.profile-avatar i {
+  font-size: 2.5rem;
+  color: white;
+}
+
+.profile-basic-info {
+  flex: 1;
+}
+
+.profile-basic-info h2 {
+  margin: 0 0 10px 0;
+  font-size: 2rem;
+  color: var(--primary-dark);
+}
+
+.profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.badge.subtle {
+  background-color: var(--gray-200);
+  color: var(--gray-700);
+}
+
+#pupil-form-badge {
+  background-color: var(--accent-color);
+  color: var(--dark-color);
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  margin-bottom: 5px;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  color: var(--dark-color);
+  font-weight: 500;
+}
+
+/* Tags Container for Categories */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
+}
+
+.category-tag {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.category-tag i {
+  margin-right: 8px;
+  color: var(--primary-color);
+}
+
+/* Two Column Grid */
+.two-column-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .two-column-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Table Styling */
+.table-container {
+  overflow-x: auto;
+  margin: 20px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-300);
+}
+
+.data-table th {
+  background-color: var(--gray-100);
+  color: var(--gray-700);
+  font-weight: 600;
+}
+
+.data-table tbody tr:hover {
+  background-color: var(--gray-100);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Empty states */
+.no-data-message {
+  padding: 20px;
+  text-align: center;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+/* Print controls */
+.print-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.action-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.action-button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Screen-only elements */
+.screen-only {
+  display: block;
+}
+
+/* Print-only elements */
+.print-only {
+  display: none;
+}
+
+/* Footer styling */
+.footer-content {
+  text-align: center;
+  padding: 20px;
+  color: var(--gray-600);
+  font-size: 0.9rem;
+}
+
+/* ============= PRINT STYLES ============= */
+@media print {
+  /* General print settings */
+  @page {
+    size: A4 portrait;
+    margin: 0.5cm;
+  }
+  
+  body {
+    background-color: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+  
+  /* Hide screen-only elements */
+  .screen-only,
+  nav,
+  header,
+  #search-section,
+  button {
+    display: none !important;
+  }
+  
+  /* Show print-only elements */
+  .print-only {
+    display: block !important;
+  }
+  
+  /* Remove shadows and effects */
+  .card {
+    box-shadow: none !important;
+    margin-bottom: 15px !important;
+    border: 1px solid #ddd !important;
+    break-inside: avoid;
+  }
+  
+  /* Ensure proper coloring for print */
+  .profile-header {
+    background: #f0f5ff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .section-header {
+    background-color: #f5f5f5 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Adjust layout for print */
+  main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  /* Force page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+  
+  .page-break-after {
+    page-break-after: always;
+  }
+  
+  /* Ensure tables fit on page */
+  .data-table {
+    width: 100% !important;
+    font-size: 10pt;
+  }
+  
+  /* Ensure no breaks in critical content */
+  .profile-header,
+  .section-header,
+  .detail-item,
+  tr {
+    break-inside: avoid;
+  }
+  
+  /* Other print-specific adjustments */
+  .badge {
+    border: 1px solid #ddd !important;
+  }
+  
+  .two-column-grid {
+    display: block !important;
+  }
+  
+  /* Improved table display */
+  .data-table th {
+    background-color: #eee !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Footer styling for print */
+  #profile-footer {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+  }
+} 
