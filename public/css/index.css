@@ -1,0 +1,34 @@
+/* index.css: Advanced, eye-catching CSS enhancements for the landing page */
+
+/*--------------------------------------------------------------
+
+1. Theming & Cascade Layers --------------------------------------------------------------/ :root { / Colour variables – replace placeholders with actual school hex codes */ --primary-blue: #002244; --secondary-yellow: #D1B800; --accent-green:   #558800; --accent-red:     #AA2222;
+
+
+
+/* Spacing & typography */ --base-gap:       1rem; --radius-lg:      1.25rem; --font-sans:      'Segoe UI', sans-serif; }
+
+@layer common { /* Import shared styles (common.css) will load first */ } @layer needs {
+
+/-------------------------------------------------------------- 2. Container Queries for Modular Responsiveness --------------------------------------------------------------/ .card-wrapper { container-type: inline-size; } @container (min-width: 30em) { .card { grid-template-columns: repeat(2, 1fr); } }
+
+/-------------------------------------------------------------- 3. Hero Section with Clip‑Path Mask & Parallax --------------------------------------------------------------/ .hero { position: relative; height: 80vh; overflow: hidden; background: var(--primary-blue) url('/img/hero-bg.jpg') center/cover no-repeat; clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%); } .hero-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font: 3rem var(--font-sans); colour: var(--secondary-yellow); text-align: center; animation: fadeIn 1.2s ease-out both; }
+
+/* Parallax on scroll (basic) */ .hero::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: inherit; transform: translateZ(-1px) scale(1.2); z-index: -1; }
+
+/-------------------------------------------------------------- 4. Scroll‑snap for Section Paging --------------------------------------------------------------/ .sections { scroll-snap-type: y mandatory; overflow-y: auto; max-height: 100vh; } .section { scroll-snap-align: start; padding: var(--base-gap) 0; }
+
+/-------------------------------------------------------------- 5. Dynamic Hover & 3D Card Effects --------------------------------------------------------------/ .card { background: white; border-radius: var(--radius-lg); overflow: hidden; transition: transform 0.4s ease, box-shadow 0.4s ease; transform-style: preserve-3d; } .card:hover { transform: translateY(-0.5rem) rotateX(4deg) rotateY(4deg); box-shadow: 0 1rem 2rem rgba(0,0,0,0.2); }
+
+/-------------------------------------------------------------- 6. Scroll‑driven Animations (Experimental) --------------------------------------------------------------/ @scroll-timeline hero-tl { source: selector(.sections); orientation: block; } .hero-title { animation-timeline: hero-tl; }
+
+/-------------------------------------------------------------- 7. View Transitions API Setup --------------------------------------------------------------/ .view-transition-container { view-transition-name: page; } ::view-transition-old( .view-transition-container ) { clip-path: inset(0% 0% 100% 0); } ::view-transition-new( .view-transition-container ) { clip-path: inset(100% 0% 0% 0); }
+
+/-------------------------------------------------------------- 8. Blend Modes & Filter Effects --------------------------------------------------------------/ .img-overlay { position: relative; } .img-overlay::before { content: ''; position: absolute; inset: 0; background: var(--accent-green); mix-blend-mode: screen; pointer-events: none; } .blur-backdrop { backdrop-filter: blur(6px) saturate(1.2); }
+
+/-------------------------------------------------------------- 9. Neon‑glow Text Effect --------------------------------------------------------------/ .neon { color: var(--secondary-yellow); text-shadow: 0 0 4px var(--secondary-yellow), 0 0 8px var(--secondary-yellow), 0 0 16px var(--secondary-yellow); animation: neon-pulse 1.5s ease-in-out infinite alternate; } @keyframes neon-pulse { from { text-shadow: 0 0 2px var(--secondary-yellow), 0 0 6px var(--secondary-yellow); } to { text-shadow: 0 0 8px var(--secondary-yellow), 0 0 16px var(--secondary-yellow), 0 0 24px var(--secondary-yellow); } }
+
+/-------------------------------------------------------------- 10. Grid Subgrid for Nested Alignment --------------------------------------------------------------/ .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--base-gap); } .grid-container > .nested { display: subgrid; grid-template-rows: subgrid; gap: inherit; }
+
+/-------------------------------------------------------------- Animations --------------------------------------------------------------/ @keyframes fadeIn { from { opacity: 0; transform: translateY(1rem); } to   { opacity: 1; transform: translateY(0); } } }
+
