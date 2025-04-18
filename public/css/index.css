@@ -49,7 +49,7 @@ a {
   Header & Logo
 --------------------------------*/
 .site-header {
-  background: var(--muted-green);       /* darker so logo pops */
+  background: rgba(0,0,0,1); /* var(--muted-green);       /* darker so logo pops */
   text-align: center;
   padding: 0.75rem 0;                    /* slightly reduced height */
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -73,7 +73,7 @@ a {
   overflow: hidden;
   background:
     var(--primary-blue)
-    url('/img/hero-bg.jpg') center/cover no-repeat;
+    url('/img/hero-bg.png') center/cover no-repeat;
   clip-path: ellipse(80% 60% at 50% 20%);
 }
 .hero::before {
