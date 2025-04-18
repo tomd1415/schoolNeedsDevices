@@ -160,6 +160,17 @@
       </div>
     </section>
   </main>
+  <script src="js/validation/validationUtils.js"></script>
+  <script src="js/validation/pupilNeedValidation.js"></script>
   <script src="js/pupil-needs.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize validation
+      PupilNeedValidation.setupPupilSelectValidation('pupil_id');
+      PupilNeedValidation.setupCategoryFormValidation('assignCategoryForm');
+      PupilNeedValidation.setupAddNeedFormValidation('addNeedForm');
+      PupilNeedValidation.setupRemoveNeedFormValidation('removeNeedForm');
+    });
+  </script>
 </body>
 </html> 

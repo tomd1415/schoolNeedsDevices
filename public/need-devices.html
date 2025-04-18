@@ -94,6 +94,14 @@
       </table>
     </section>
   </main>
+  <script src="js/validation/validationUtils.js"></script>
+  <script src="js/validation/needDeviceValidation.js"></script>
   <script src="js/need-devices.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize validation
+      NeedDeviceValidation.setupFormValidation('assignDeviceForm');
+    });
+  </script>
 </body>
 </html> 

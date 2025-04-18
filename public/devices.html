@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Device Management - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/validation.css">
 </head>
 <body>
   <header>
@@ -92,6 +93,14 @@
       </table>
     </section>
   </main>
+  <script src="js/validation/validationUtils.js"></script>
+  <script src="js/validation/deviceValidation.js"></script>
   <script src="js/devices.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize validation
+      DeviceValidation.setupFormValidation('deviceForm');
+    });
+  </script>
 </body>
 </html> 

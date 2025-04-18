@@ -5,6 +5,7 @@
   <title>Need Management - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/needs.css">
+  <link rel="stylesheet" href="css/validation.css">
 </head>
 <body>
   <header>
@@ -23,44 +24,38 @@
     </ul>
   </nav>
   <main>
-    <!-- Add/Edit Need Section -->
-    <section id="need-form-section" class="form-section">
-      <h2>Add/Edit Need</h2>
+    <section class="container">
+      <h1>Manage Needs</h1>
       <form id="needForm">
-        <input type="hidden" id="need_id" name="need_id" value="">
-        <div>
+        <input type="hidden" id="need_id" name="need_id">
+        <div class="form-group">
           <label for="need_name">Need Name:</label>
           <input type="text" id="need_name" name="need_name" required>
         </div>
-        <div>
+        <div class="form-group">
           <label for="category_id">Primary Category:</label>
           <select id="category_id" name="category_id">
-            <option value="">Select a primary category (optional)</option>
-            <!-- Options will be populated dynamically -->
+            <option value="">Select a category</option>
           </select>
-          <p class="hint">You can assign additional categories using the "Manage Categories" button after saving.</p>
         </div>
-        <div>
+        <div class="form-group">
           <label for="need_short_desc">Short Description:</label>
           <input type="text" id="need_short_desc" name="need_short_desc">
         </div>
-        <div>
+        <div class="form-group">
           <label for="need_long_desc">Long Description:</label>
-          <textarea id="need_long_desc" name="need_long_desc"></textarea>
+          <textarea id="need_long_desc" name="need_long_desc" rows="4"></textarea>
         </div>
-
-        <button type="submit" id="saveNeedBtn">Save Need</button>
+        <button type="submit" class="btn">Save Need</button>
       </form>
     </section>
-
-    <!-- List of Needs -->
-    <section id="need-list-section" class="list-section">
-      <h2>Need List</h2>
+    <section class="container">
+      <h2>Current Needs</h2>
       <table id="needTable">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Need Name</th>
+            <th>Name</th>
             <th>Categories</th>
             <th>Short Description</th>
             <th>Description</th>
@@ -73,6 +68,14 @@
       </table>
     </section>
   </main>
+  <script src="js/validation/validationUtils.js"></script>
+  <script src="js/validation/needValidation.js"></script>
   <script src="js/needs.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize validation
+      NeedValidation.setupFormValidation('needForm');
+    });
+  </script>
 </body>
 </html> 
