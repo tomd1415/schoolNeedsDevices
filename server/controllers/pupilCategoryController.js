@@ -26,6 +26,17 @@ const assignCategory = async (req, res) => {
     res.status(201).json({ message: 'Category assigned successfully' });
   } catch (error) {
     console.error('Error assigning category:', error);
+    
+    // Check for duplicate category error
+    if (error.code === 'DUPLICATE_CATEGORY') {
+      return res.status(409).json({ message: 'This category is already assigned to the pupil' });
+    }
+    
+    // Check for database unique constraint violation as fallback
+    if (error.code === '23505') {
+      return res.status(409).json({ message: 'This category is already assigned to the pupil' });
+    }
+    
     res.status(500).json({ message: 'Failed to assign category' });
   }
 };

@@ -181,15 +181,17 @@ CROSS JOIN
 LEFT JOIN 
     pupil_need_override o ON p.pupil_id = o.pupil_id AND n.need_id = o.need_id
 WHERE
-    -- Include needs from categories
-    EXISTS (
-        SELECT 1
-        FROM pupil_category pc
-        JOIN category_need cn ON pc.category_id = cn.category_id
-        WHERE pc.pupil_id = p.pupil_id AND cn.need_id = n.need_id
+    (
+        -- Include needs from categories
+        EXISTS (
+            SELECT 1
+            FROM pupil_category pc
+            JOIN category_need cn ON pc.category_id = cn.category_id
+            WHERE pc.pupil_id = p.pupil_id AND cn.need_id = n.need_id
+        )
+        -- Or needs explicitly added
+        OR (o.pupil_id IS NOT NULL AND o.is_added = TRUE)
     )
-    -- Or needs explicitly added
-    OR (o.pupil_id IS NOT NULL AND o.is_added = TRUE)
     -- But exclude needs explicitly removed
     AND NOT EXISTS (
         SELECT 1

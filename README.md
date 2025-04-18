@@ -37,6 +37,7 @@ The project has a full-stack implementation with the following components:
 - Controllers for CRUD operations and relationship management
 - File upload functionality for CSV imports
 - Comprehensive pupil profile API that aggregates related data
+- Database view for effective pupil needs calculation
 
 ### Frontend
 - Clean, responsive interface with navigation
@@ -45,6 +46,7 @@ The project has a full-stack implementation with the following components:
 - Modal dialogs for managing relationships
 - Advanced pupil search with autocomplete functionality
 - Print-optimized pupil profile view for A4 portrait paper
+- Modular JavaScript architecture for the pupil search and profile features
 
 ## Implemented Features
 
@@ -60,6 +62,12 @@ The project has a full-stack implementation with the following components:
 - ✅ Comprehensive pupil search with autocomplete
 - ✅ Detailed pupil profile view showing all related information
 - ✅ Print-optimized layout for pupil profiles
+- ✅ In-place editing of pupil details from the search page
+- ✅ Adding/removing categories directly from profile view
+- ✅ Interface for managing need overrides inline
+- ✅ Ability to assign/unassign devices from the profile page
+- ✅ Client and server-side validation for duplicate category assignments
+- ✅ Proper removal of needs via the override system
 
 ## Recently Resolved Issues
 
@@ -72,6 +80,11 @@ The project has a full-stack implementation with the following components:
 - ✅ Fixed route order in Express for correct handling of specific vs. wildcard routes
 - ✅ Fixed pupil search functionality with proper DOM management to prevent null element errors
 - ✅ Improved error handling in the pupil profile display
+- ✅ Fixed JSON parsing errors when removing devices and categories
+- ✅ Refactored pupil-search.js into modular components for better maintainability
+- ✅ Fixed issue with effective needs calculation to properly exclude removed needs
+- ✅ Implemented proper client and server-side validation for pupil-category assignments
+- ✅ Updated database queries to use the effective_pupil_needs view consistently
 
 ## Remaining Issues
 
@@ -83,16 +96,40 @@ The project has a full-stack implementation with the following components:
 
 ```
 /
-├── public/               # Frontend files
-│   ├── css/              # Stylesheets
-│   ├── js/               # JavaScript files
-│   └── *.html            # HTML pages
-└── server/               # Backend files
-    ├── config/           # Database configuration
-    ├── controllers/      # API controllers
-    ├── models/           # Data models
-    ├── routes/           # API routes
-    └── uploads/          # Uploaded files
+├── public/                     # Frontend files
+│   ├── css/                    # Stylesheets
+│   │   ├── common.css          # Shared styles
+│   │   ├── pupil-search.css    # Styles for pupil search
+│   │   ├── validation.css      # Form validation styles
+│   │   └── ...                 # Other stylesheets
+│   ├── js/                     # JavaScript files
+│   │   ├── pupil-search/       # Modular components for pupil search
+│   │   │   ├── core.js         # Core state and initialization
+│   │   │   ├── profile.js      # Pupil profile loading and display
+│   │   │   ├── category-manager.js # Category management
+│   │   │   ├── device-manager.js   # Device management
+│   │   │   ├── override-manager.js # Override management
+│   │   │   ├── ui.js           # UI interactions
+│   │   │   ├── modal-utils.js  # Modal dialog utilities
+│   │   │   └── main.js         # Entry point
+│   │   ├── validation/         # Form validation scripts
+│   │   └── ...                 # Other JS files for each page
+│   └── *.html                  # HTML pages
+└── server/                     # Backend files
+    ├── config/                 # Database configuration
+    ├── controllers/            # API controllers
+    │   ├── categoryController.js     # Category management
+    │   ├── deviceController.js       # Device management
+    │   ├── formController.js         # Form management
+    │   ├── needController.js         # Need management
+    │   ├── pupilController.js        # Pupil management
+    │   ├── pupilCategoryController.js # Pupil-category relationships
+    │   ├── pupilProfileController.js  # Comprehensive pupil profiles
+    │   └── ...                       # Other controllers
+    ├── models/                 # Data models
+    ├── routes/                 # API routes
+    ├── uploads/                # Uploaded files
+    └── index.js                # Server entry point
 ```
 
 ## Database Schema
@@ -107,6 +144,8 @@ The database uses a relational structure with the following key tables:
 - `pupil_need_override`: Stores overrides that add or remove specific needs for pupils
 - `device`: Stores device information
 - `need_device`: Junction table linking needs to their associated devices
+- `form`: Stores form/class information
+- `effective_pupil_needs`: View that calculates a pupil's effective needs based on their categories and overrides
 
 ## Key Workflows
 
@@ -129,20 +168,19 @@ The database uses a relational structure with the following key tables:
    - Search for pupils by name with autocomplete suggestions
    - View comprehensive pupil profiles showing all related information
    - Print pupil profiles in A4 portrait format
+   - Edit pupil details directly from the profile
+   - Add/remove categories and manage need overrides
+   - Assign/unassign devices for specific needs
 
 ## Next Steps
 
 1. Update the create_db.sql file to match the current database schema
 2. Fix update functionality for all entities
 3. Add more comprehensive validation and error handling
-4. Implement in-place editing functionality for pupil profiles
-   - Allow direct editing of pupil details from the search page
-   - Enable adding/removing categories directly from profile view
-   - Provide interface for managing need overrides inline
-   - Add ability to assign/unassign devices from the profile page
-5. Add reporting functionality
-6. Add user authentication and authorization
-7. Implement audit trails for tracking changes
+4. Add reporting functionality
+5. Add user authentication and authorization
+6. Implement audit trails for tracking changes
+7. Add data visualization for needs and device distribution
 
 ## Usage
 

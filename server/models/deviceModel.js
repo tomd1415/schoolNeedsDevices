@@ -70,6 +70,20 @@ const removeDeviceFromNeed = async (need_id, device_id) => {
   await pool.query('DELETE FROM need_device WHERE need_id = $1 AND device_id = $2', [need_id, device_id]);
 };
 
+// Get devices not assigned to any need
+const getUnassignedDevices = async () => {
+  const result = await pool.query(`
+    SELECT d.*, c.category_name 
+    FROM device d
+    LEFT JOIN category c ON d.category_id = c.category_id
+    WHERE d.device_id NOT IN (
+      SELECT DISTINCT device_id FROM need_device
+    )
+    ORDER BY d.name
+  `);
+  return result.rows;
+};
+
 module.exports = {
   getDevices,
   getDeviceById,
@@ -78,5 +92,6 @@ module.exports = {
   deleteDevice,
   getNeedDevices,
   assignDeviceToNeed,
-  removeDeviceFromNeed
+  removeDeviceFromNeed,
+  getUnassignedDevices
 }; 

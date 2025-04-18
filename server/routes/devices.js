@@ -4,6 +4,7 @@ const deviceController = require('../controllers/deviceController');
 
 // API endpoints for device CRUD operations
 router.get('/', deviceController.getAllDevices);
+router.get('/unassigned', deviceController.getUnassignedDevices);
 router.get('/:id', deviceController.getDeviceById);
 router.post('/', deviceController.createDevice);
 router.put('/:id', deviceController.updateDevice);

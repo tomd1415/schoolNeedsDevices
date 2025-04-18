@@ -72,12 +72,52 @@ exports.getPupilProfile = async (req, res) => {
     
     pupilData.categories = categoriesResult.rows;
     
-    // Get effective needs for the pupil using the view
+    // Get effective needs for the pupil using inline query with fixed logic instead of the view
     const needsResult = await db.query(`
-      SELECT * FROM effective_pupil_needs
-      WHERE pupil_id = $1
+      WITH category_needs AS (
+        -- Get all needs from categories assigned to the pupil
+        SELECT 
+          n.need_id, 
+          n.name, 
+          n.description,
+          n.short_description,
+          string_agg(c.category_name, ', ') AS sources
+        FROM need n
+        JOIN category_need cn ON n.need_id = cn.need_id
+        JOIN category c ON cn.category_id = c.category_id
+        JOIN pupil_category pc ON c.category_id = pc.category_id
+        WHERE pc.pupil_id = $1
+        GROUP BY n.need_id, n.name, n.description, n.short_description
+      ),
+      added_needs AS (
+        -- Get needs explicitly added via overrides
+        SELECT 
+          n.need_id, 
+          n.name, 
+          n.description,
+          n.short_description,
+          'Added manually' AS sources
+        FROM pupil_need_override pno
+        JOIN need n ON pno.need_id = n.need_id
+        WHERE pno.pupil_id = $1 AND pno.is_added = true
+      ),
+      removed_needs AS (
+        -- Get needs explicitly removed via overrides
+        SELECT need_id
+        FROM pupil_need_override
+        WHERE pupil_id = $1 AND is_added = false
+      )
+      -- Combine all needs that apply to the pupil
+      SELECT * FROM (
+        SELECT * FROM category_needs
+        UNION
+        SELECT * FROM added_needs
+      ) AS all_needs
+      WHERE need_id NOT IN (SELECT need_id FROM removed_needs)
       ORDER BY name
     `, [pupilId]);
+    
+    console.log(`DEBUG: Effective needs for pupil ${pupilId}:`, JSON.stringify(needsResult.rows));
     
     pupilData.effective_needs = needsResult.rows;
     

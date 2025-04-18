@@ -106,6 +106,16 @@ const removeDeviceFromNeed = async (req, res) => {
   }
 };
 
+// Get devices not assigned to any need
+const getUnassignedDevices = async (req, res) => {
+  try {
+    const devices = await deviceModel.getUnassignedDevices();
+    res.json(devices);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   getAllDevices,
   getDeviceById,
@@ -114,5 +124,6 @@ module.exports = {
   deleteDevice,
   getNeedDevices,
   assignDeviceToNeed,
-  removeDeviceFromNeed
+  removeDeviceFromNeed,
+  getUnassignedDevices
 }; 
