@@ -1,34 +1,207 @@
-/* index.css: Advanced, eye-catching CSS enhancements for the landing page */
+/*--------------------------------
+  Variables & Base Reset
+--------------------------------*/
+:root {
+  /* Muted school palette (from logo) */
+  --primary-blue:       #2A3990;
+  --secondary-yellow:   #D1B800;
+  --muted-yellow:       rgba(209,184,0,0.2);
+  --muted-green:        rgba(85,136,0,0.2);
+  --muted-red:          rgba(170,34,34,0.2);
+  --muted-yellow:       rgba(209,184,0,0.4);
+  --muted-green:        rgba(85,136,0,0.4);
+  --muted-red:          rgba(170,34,34,0.4);
 
-/*--------------------------------------------------------------
 
-1. Theming & Cascade Layers --------------------------------------------------------------/ :root { / Colour variables – replace placeholders with actual school hex codes */ --primary-blue: #002244; --secondary-yellow: #D1B800; --accent-green:   #558800; --accent-red:     #AA2222;
+  /* Layout & sizing */
+  --hero-height:        20vh;        /* reduced from 35vh */
+  --circle-radius:      35vh;
+  --card-size:          9.2rem;
+  --center-card-scale:  1.2;
+  --radius:             20%;
+  --gap:                1rem;
+  --ring-offset:  calc(var(--circle-radius) - (var(--card-size) / 1.2));
 
+  /* Typography */
+  --font-sans:          'Segoe UI', sans-serif;
+  --transition:         0.3s ease;
+}
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* Spacing & typography */ --base-gap:       1rem; --radius-lg:      1.25rem; --font-sans:      'Segoe UI', sans-serif; }
+body {
+  font-family: var(--font-sans);
+  background: #f5f7fa;
+  color: #222;
+  overflow-x: hidden;
+}
 
-@layer common { /* Import shared styles (common.css) will load first */ } @layer needs {
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-/-------------------------------------------------------------- 2. Container Queries for Modular Responsiveness --------------------------------------------------------------/ .card-wrapper { container-type: inline-size; } @container (min-width: 30em) { .card { grid-template-columns: repeat(2, 1fr); } }
+/*--------------------------------
+  Header & Logo
+--------------------------------*/
+.site-header {
+  background: var(--muted-green);       /* darker so logo pops */
+  text-align: center;
+  padding: 0.75rem 0;                    /* slightly reduced height */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 10;
+}
+.site-header .logo {
+  max-height: 2.5rem;                    /* scale down a little */
+  width: auto;
+}
 
-/-------------------------------------------------------------- 3. Hero Section with Clip‑Path Mask & Parallax --------------------------------------------------------------/ .hero { position: relative; height: 80vh; overflow: hidden; background: var(--primary-blue) url('/img/hero-bg.jpg') center/cover no-repeat; clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%); } .hero-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font: 3rem var(--font-sans); colour: var(--secondary-yellow); text-align: center; animation: fadeIn 1.2s ease-out both; }
+/*--------------------------------
+  Hero Section
+--------------------------------*/
+.hero {
+  height: var(--hero-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    var(--primary-blue)
+    url('/img/hero-bg.jpg') center/cover no-repeat;
+  clip-path: ellipse(80% 60% at 50% 20%);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.3),
+    transparent 60%
+  );
+}
+.hero-text {
+  position: relative;
+  text-align: center;
+  animation: fadeIn 0.8s both;
+}
+.hero-text h1 {
+  font-size: 3rem;                       /* larger text */
+  color: #ffffff;                        /* high‑contrast white */
+  margin: 0;
+}
 
-/* Parallax on scroll (basic) */ .hero::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: inherit; transform: translateZ(-1px) scale(1.2); z-index: -1; }
+/* Neon‑glow override */
+.hero-text .neon {
+  text-shadow:
+    0 0 4px #fff,
+    0 0 8px var(--secondary-yellow);
+  animation: neonPulse 1.2s ease-in-out infinite alternate;
+}
 
-/-------------------------------------------------------------- 4. Scroll‑snap for Section Paging --------------------------------------------------------------/ .sections { scroll-snap-type: y mandatory; overflow-y: auto; max-height: 100vh; } .section { scroll-snap-align: start; padding: var(--base-gap) 0; }
+@keyframes neonPulse {
+  from { text-shadow: 0 0 2px #fff; }
+  to {
+    text-shadow:
+      0 0 6px var(--secondary-yellow),
+      0 0 12px var(--secondary-yellow);
+  }
+}
 
-/-------------------------------------------------------------- 5. Dynamic Hover & 3D Card Effects --------------------------------------------------------------/ .card { background: white; border-radius: var(--radius-lg); overflow: hidden; transition: transform 0.4s ease, box-shadow 0.4s ease; transform-style: preserve-3d; } .card:hover { transform: translateY(-0.5rem) rotateX(4deg) rotateY(4deg); box-shadow: 0 1rem 2rem rgba(0,0,0,0.2); }
+/*--------------------------------
+  Circular Card Container
+--------------------------------*/
+.circle-container {
+  --num: 7;
+  position: relative;
+  width: calc(var(--circle-radius) * 2);
+  height: calc(var(--circle-radius) * 2);
+  margin: 2rem auto;
+  background:
+    radial-gradient(circle at center, var(--muted-yellow), transparent 70%),
+    radial-gradient(circle at bottom left, var(--muted-green), transparent 80%),
+    radial-gradient(circle at top right, var(--muted-red), transparent 80%);
+  border-radius: 50%;
+}
 
-/-------------------------------------------------------------- 6. Scroll‑driven Animations (Experimental) --------------------------------------------------------------/ @scroll-timeline hero-tl { source: selector(.sections); orientation: block; } .hero-title { animation-timeline: hero-tl; }
+/* Base Card Styles */
+.card {
+  position: absolute;
+  width: var(--card-size);
+  height: var(--card-size);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: white;
+  color: var(--primary-blue);
+  text-align: center;
+  transition: transform var(--transition), box-shadow var(--transition);
+  z-index: 99;
+}
 
-/-------------------------------------------------------------- 7. View Transitions API Setup --------------------------------------------------------------/ .view-transition-container { view-transition-name: page; } ::view-transition-old( .view-transition-container ) { clip-path: inset(0% 0% 100% 0); } ::view-transition-new( .view-transition-container ) { clip-path: inset(100% 0% 0% 0); }
+/* Ring cards positioning */
+.ring-card {
+  top: 50%; left: 50%;
+  transform:
+    translate(-50%, -50%)
+    rotate(calc(360deg / var(--num) * var(--i)))
+    translateY(calc(-1 * var(--ring-offset)))
+    rotate(calc(-360deg / var(--num) * var(--i)));
+}
 
-/-------------------------------------------------------------- 8. Blend Modes & Filter Effects --------------------------------------------------------------/ .img-overlay { position: relative; } .img-overlay::before { content: ''; position: absolute; inset: 0; background: var(--accent-green); mix-blend-mode: screen; pointer-events: none; } .blur-backdrop { backdrop-filter: blur(6px) saturate(1.2); }
+/* Ring‑card hover pop */
+.ring-card:hover {
+  transform:
+    translate(-50%, -50%)
+    rotate(calc(360deg / var(--num) * var(--i)))
+    translateY(calc(-1 * var(--circle-radius)))
+    rotate(calc(-360deg / var(--num) * var(--i)))
+    scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
 
-/-------------------------------------------------------------- 9. Neon‑glow Text Effect --------------------------------------------------------------/ .neon { color: var(--secondary-yellow); text-shadow: 0 0 4px var(--secondary-yellow), 0 0 8px var(--secondary-yellow), 0 0 16px var(--secondary-yellow); animation: neon-pulse 1.5s ease-in-out infinite alternate; } @keyframes neon-pulse { from { text-shadow: 0 0 2px var(--secondary-yellow), 0 0 6px var(--secondary-yellow); } to { text-shadow: 0 0 8px var(--secondary-yellow), 0 0 16px var(--secondary-yellow), 0 0 24px var(--secondary-yellow); } }
+/* Muted‑colour backgrounds */
+.ring-card:nth-child(3n+1) { background: var(--muted-yellow); }
+.ring-card:nth-child(3n+2) { background: var(--muted-green); }
+.ring-card:nth-child(3n)   { background: var(--muted-red); }
 
-/-------------------------------------------------------------- 10. Grid Subgrid for Nested Alignment --------------------------------------------------------------/ .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--base-gap); } .grid-container > .nested { display: subgrid; grid-template-rows: subgrid; gap: inherit; }
+/* Centre card styling */
+.center-card {
+  top: 50%;
+  left: 50%;
+  z-index: 0;                            /* behind the ring cards */
+  width: calc(var(--card-size) * var(--center-card-scale));
+  height: calc(var(--card-size) * var(--center-card-scale));
+  transform: translate(-50%, -50%);
+  background: var(--secondary-yellow);
+  color: var(--primary-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
 
-/-------------------------------------------------------------- Animations --------------------------------------------------------------/ @keyframes fadeIn { from { opacity: 0; transform: translateY(1rem); } to   { opacity: 1; transform: translateY(0); } } }
+.center-card:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+/*--------------------------------
+  Animations
+--------------------------------*/
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
