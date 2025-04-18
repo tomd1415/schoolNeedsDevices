@@ -1,13 +1,18 @@
 /* Pupil Search & Profile Styles */
 
 :root {
-  --primary-color: #4b70e2;
-  --primary-light: #eef2ff;
-  --primary-dark: #305099;
+  --primary-color: #3b82f6;
+  --primary-rgb: 59, 130, 246;
+  --primary-dark: #2563eb;
   --secondary-color: #3ec2c9;
   --secondary-light: #e5f7f8;
-  --accent-color: #ff9e44;
-  --accent-light: #fff4e9;
+  --accent-color: #8b5cf6;
+  --accent-light: #f5f3ff;
+  --success-color: #4CAF50;
+  --warning-color: #FFC107;
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --info-color: #5bc0de;
   --dark-color: #333333;
   --light-color: #ffffff;
   --gray-100: #f8f9fa;
@@ -18,13 +23,14 @@
   --gray-600: #6c757d;
   --gray-700: #495057;
   --gray-800: #343a40;
-  --success-color: #4CAF50;
-  --warning-color: #FFC107;
-  --danger-color: #e74c3c;
-  --info-color: #5bc0de;
   --border-radius: 8px;
   --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --background-color: #f9fafb;
+  --card-background: #ffffff;
+  --border-color: #e5e7eb;
 }
 
 /* Overall layout for the pupil search page */
@@ -58,6 +64,9 @@ main {
   background-color: var(--primary-light);
   padding: 15px 20px;
   border-bottom: 1px solid var(--gray-300);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .section-header h3 {
@@ -335,6 +344,11 @@ main {
   margin-bottom: 20px;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 .action-button {
   background-color: var(--primary-color);
   color: white;
@@ -351,6 +365,160 @@ main {
 
 .action-button:hover {
   background-color: var(--primary-dark);
+}
+
+/* Edit mode styles */
+#edit-toggle.active {
+  background-color: var(--warning-color);
+  color: var(--dark-color);
+}
+
+.edit-controls {
+  display: none !important;
+  margin-bottom: 20px;
+  justify-content: flex-end;
+}
+
+.edit-mode .edit-controls {
+  display: flex !important;
+  gap: 10px;
+}
+
+.save-button {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #3d8b40;
+}
+
+.cancel-button {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+}
+
+/* Editable field styles */
+.edit-mode .editable {
+  position: relative;
+  cursor: pointer;
+}
+
+.edit-mode .editable:hover {
+  background-color: var(--primary-light);
+}
+
+.edit-mode .editable::after {
+  content: '\f044';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.edit-mode .editable:hover::after {
+  opacity: 1;
+}
+
+.edit-mode .editable-field {
+  padding: 5px 8px;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  font-size: inherit;
+  font-family: inherit;
+  width: 100%;
+}
+
+.edit-mode .editable-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.edit-mode .editable-select {
+  padding: 5px 8px;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  background-color: white;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+/* Category management in edit mode */
+.edit-mode .categories-edit-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.edit-mode .category-tag .remove-btn {
+  margin-left: 8px;
+  color: var(--danger-color);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.edit-mode .category-tag:hover .remove-btn {
+  opacity: 1;
+}
+
+/* Add buttons for categories, overrides and devices */
+.add-item-btn {
+  display: none;
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+.edit-mode .add-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-item-btn:hover {
+  background-color: #3d8b40;
+}
+
+/* Action column in tables for edit mode */
+.edit-mode .data-table .action-col {
+  display: table-cell;
+}
+
+.data-table .action-col {
+  display: none;
+}
+
+.data-table .edit-btn,
+.data-table .delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 5px;
+  margin-right: 5px;
+}
+
+.data-table .edit-btn {
+  color: var(--primary-color);
+}
+
+.data-table .delete-btn {
+  color: var(--danger-color);
 }
 
 /* Screen-only elements */
@@ -377,6 +545,10 @@ main {
   @page {
     size: A4 portrait;
     margin: 0.5cm;
+    /* Remove default headers and footers */
+    margin-top: 0;
+    margin-bottom: 0;
+    marks: none;
   }
   
   body {
@@ -390,7 +562,11 @@ main {
   nav,
   header,
   #search-section,
-  button {
+  button,
+  .edit-controls,
+  .add-item-btn,
+  .action-col,
+  .editable::after {
     display: none !important;
   }
   
@@ -470,4 +646,338 @@ main {
     margin-top: 20px;
     border-top: 1px solid #ddd;
   }
+}
+
+/* Modal Dialog Styles */
+.modal-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--gray-300);
+  background-color: var(--primary-light);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--primary-dark);
+}
+
+.modal-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--gray-600);
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid var(--gray-300);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-footer button {
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
+.modal-footer .cancel-btn {
+  background-color: var(--gray-300);
+  color: var(--gray-700);
+}
+
+.modal-footer .confirm-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.form-group select,
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Override colors */
+.override-added {
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+.override-removed {
+  color: var(--danger-color);
+  font-weight: 500;
+}
+
+/* Devices list styling */
+.devices-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.device-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.device-info strong {
+  margin-bottom: 0.25rem;
+}
+
+.device-info span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.remove-device-btn {
+  background-color: var(--danger-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.remove-device-btn:hover {
+  background-color: var(--danger-hover);
+}
+
+/* Hide remove buttons when printing */
+@media print {
+  .remove-device-btn {
+    display: none;
+  }
+}
+
+/* Categories list styling */
+.categories-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--accent-light);
+  border-radius: 4px;
+}
+
+.category-info {
+  display: flex;
+  align-items: center;
+}
+
+.category-info strong {
+  color: var(--accent-color);
+}
+
+.remove-category-btn {
+  background-color: var(--danger-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.remove-category-btn:hover {
+  background-color: var(--danger-hover);
+}
+
+/* Overrides list styling */
+.overrides-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.override-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.override-info {
+  flex: 1;
+}
+
+.override-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.override-notes {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.add-badge {
+  background-color: #e3fcef;
+  color: #10b981;
+}
+
+.remove-badge {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.override-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-override-btn, .remove-override-btn {
+  background-color: transparent;
+  border: none;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.edit-override-btn {
+  color: var(--primary-color);
+}
+
+.edit-override-btn:hover {
+  background-color: rgba(var(--primary-rgb), 0.1);
+}
+
+.remove-override-btn {
+  color: var(--danger-color);
+}
+
+.remove-override-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Hide action buttons when printing */
+@media print {
+  .override-actions {
+    display: none;
+  }
+}
+
+/* Add button styling */
+.add-btn {
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-btn:hover {
+  background-color: #3d8b40;
+}
+
+.override-type-container {
+  margin: 10px 0;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.radio-option label {
+  margin-left: 8px;
+  font-weight: normal;
 } 

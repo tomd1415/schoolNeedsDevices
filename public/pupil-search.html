@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Meta tags to help control print settings -->
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Pupil Search & Profile - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/validation.css">
@@ -47,9 +51,20 @@
     </section>
 
     <div id="profile-content" style="display: none;">
-      <!-- Print button, only visible on screen -->
+      <!-- Action buttons, only visible on screen -->
       <div class="print-controls screen-only">
-        <button id="print-btn" class="action-button"><i class="fas fa-print"></i> Print Profile</button>
+        <div class="action-buttons">
+          <button id="edit-toggle" class="action-button"><i class="fas fa-edit"></i> Edit Mode</button>
+          <button id="print-btn" class="action-button"><i class="fas fa-print"></i> Print Profile</button>
+        </div>
+      </div>
+
+      <!-- Hidden save changes button, shown in edit mode -->
+      <div class="edit-controls screen-only">
+        <div class="action-buttons">
+          <button id="save-changes" class="action-button save-button"><i class="fas fa-save"></i> Save Changes</button>
+          <button id="cancel-edit" class="action-button cancel-button"><i class="fas fa-times"></i> Cancel</button>
+        </div>
       </div>
 
       <!-- Pupil header info -->
@@ -76,15 +91,15 @@
         <div class="details-grid">
           <div class="detail-item">
             <span class="detail-label">First Name</span>
-            <span id="pupil-first-name" class="detail-value"></span>
+            <span id="pupil-first-name" class="detail-value editable" data-field="first_name"></span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Last Name</span>
-            <span id="pupil-last-name" class="detail-value"></span>
+            <span id="pupil-last-name" class="detail-value editable" data-field="last_name"></span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Form Group</span>
-            <span id="pupil-form-name" class="detail-value"></span>
+            <span id="pupil-form-name" class="detail-value editable" data-field="form_id"></span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Year</span>
@@ -92,7 +107,7 @@
           </div>
           <div class="detail-item full-width">
             <span class="detail-label">Notes</span>
-            <span id="pupil-notes" class="detail-value"></span>
+            <span id="pupil-notes" class="detail-value editable" data-field="notes"></span>
           </div>
         </div>
       </section>
@@ -100,11 +115,13 @@
       <!-- Categories section -->
       <section id="categories-section" class="card profile-section">
         <div class="section-header">
-          <h3><i class="fas fa-tags"></i> Assigned Categories</h3>
+          <h3><i class="fas fa-tags"></i> Categories</h3>
+          <button id="add-category-btn" class="add-btn screen-only add-item-btn">
+            <i class="fas fa-plus"></i> Add Category
+          </button>
         </div>
-        <div id="categories-container" class="tags-container">
-          <!-- Categories will be added here dynamically -->
-          <p id="no-categories-message" class="no-data-message">No categories assigned to this pupil.</p>
+        <div id="categories-container" class="content-container">
+          <p>No categories assigned</p>
         </div>
       </section>
 
@@ -133,27 +150,16 @@
           </div>
         </section>
 
-        <!-- Overrides section -->
+        <!-- Need Overrides section -->
         <section id="overrides-section" class="card profile-section">
           <div class="section-header">
-            <h3><i class="fas fa-edit"></i> Need Overrides</h3>
+            <h3><i class="fas fa-clipboard-check"></i> Need Overrides</h3>
+            <button id="add-override-btn" class="add-btn screen-only add-item-btn">
+              <i class="fas fa-plus"></i> Add Override
+            </button>
           </div>
-          <div id="overrides-container">
-            <div class="table-container">
-              <table id="overrides-table" class="data-table">
-                <thead>
-                  <tr>
-                    <th>Need</th>
-                    <th>Type</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Overrides will be added here dynamically -->
-                </tbody>
-              </table>
-            </div>
-            <p id="no-overrides-message" class="no-data-message">No need overrides for this pupil.</p>
+          <div id="overrides-container" class="content-container">
+            <p>No need overrides</p>
           </div>
         </section>
       </div>
@@ -162,26 +168,12 @@
       <section id="devices-section" class="card profile-section page-break-before">
         <div class="section-header">
           <h3><i class="fas fa-laptop"></i> Assigned Devices</h3>
+          <button id="add-device-btn" class="add-btn screen-only add-item-btn">
+            <i class="fas fa-plus"></i> Add Device
+          </button>
         </div>
-        <div id="devices-container">
-          <div class="table-container">
-            <table id="devices-table" class="data-table">
-              <thead>
-                <tr>
-                  <th>Device</th>
-                  <th>For Need</th>
-                  <th>Model</th>
-                  <th>Serial Number</th>
-                  <th>Assignment Date</th>
-                  <th>Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Devices will be added here dynamically -->
-              </tbody>
-            </table>
-          </div>
-          <p id="no-devices-message" class="no-data-message">No devices assigned to this pupil.</p>
+        <div id="devices-container" class="content-container">
+          <p>No devices assigned</p>
         </div>
       </section>
 

@@ -70,24 +70,34 @@ exports.updatePupil = async (req, res) => {
     const { id } = req.params;
     const { first_name, last_name, form_id, notes } = req.body;
     
+    console.log('Update request for pupil ID:', id);
+    console.log('Request body:', req.body);
+    
     // Validate required fields
     if (!first_name || !last_name) {
       return res.status(400).json({ error: 'First name and last name are required' });
     }
+
+    // Handle form_id properly (it can be null, but not undefined)
+    const formIdParam = form_id === undefined ? null : form_id;
+    const notesParam = notes === undefined ? null : notes;
+    
+    console.log('Using parameters:', { first_name, last_name, form_id: formIdParam, notes: notesParam });
     
     const result = await db.query(
       'UPDATE pupil SET first_name = $1, last_name = $2, form_id = $3, notes = $4 WHERE pupil_id = $5 RETURNING *',
-      [first_name, last_name, form_id, notes, id]
+      [first_name, last_name, formIdParam, notesParam, id]
     );
     
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Pupil not found' });
     }
     
+    console.log('Update successful. Returning:', result.rows[0]);
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating pupil:', error);
-    res.status(500).json({ error: 'Failed to update pupil' });
+    res.status(500).json({ error: 'Failed to update pupil: ' + error.message });
   }
 };
 
