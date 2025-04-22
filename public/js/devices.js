@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const deviceForm = document.getElementById('deviceForm');
   const deviceTableBody = document.querySelector('#deviceTable tbody');
   const categorySelect = document.getElementById('category_id');
+  const clearFormBtn = document.getElementById('clearFormBtn');
 
   // Load categories for the dropdown
   const loadCategories = async () => {
@@ -50,8 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${device.category_name || 'Uncategorised'}</td>
           <td>${device.status || 'Unknown'}</td>
           <td>
-            <button class="editBtn" data-id="${device.device_id}">Edit</button>
-            <button class="deleteBtn" data-id="${device.device_id}">Delete</button>
+            <button class="btn-primary editBtn" data-id="${device.device_id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-danger deleteBtn" data-id="${device.device_id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
           </td>
         `;
         deviceTableBody.appendChild(tr);
@@ -64,6 +69,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize the page
   loadCategories();
   loadDevices();
+
+  // Clear form function
+  const clearForm = () => {
+    deviceForm.reset();
+    document.getElementById('device_id').value = '';
+  };
+
+  // Clear form button event
+  if (clearFormBtn) {
+    clearFormBtn.addEventListener('click', clearForm);
+  }
 
   // Handle add/edit device form submission
   deviceForm.addEventListener('submit', async (e) => {
@@ -101,8 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (!response.ok) throw new Error('Failed to add device');
       }
-      deviceForm.reset();
-      document.getElementById('device_id').value = '';
+      clearForm();
       loadDevices();
     } catch (error) {
       console.error('Error saving device:', error);
@@ -111,8 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Delegate events for edit and delete buttons in the device table
   deviceTableBody.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('editBtn')) {
-      const id = e.target.getAttribute('data-id');
+    if (e.target.classList.contains('editBtn') || e.target.closest('.editBtn')) {
+      const btn = e.target.classList.contains('editBtn') ? e.target : e.target.closest('.editBtn');
+      const id = btn.getAttribute('data-id');
       try {
         const response = await fetch(`/api/devices/${id}`);
         const device = await response.json();
@@ -132,8 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (e.target.classList.contains('deleteBtn')) {
-      const id = e.target.getAttribute('data-id');
+    if (e.target.classList.contains('deleteBtn') || e.target.closest('.deleteBtn')) {
+      const btn = e.target.classList.contains('deleteBtn') ? e.target : e.target.closest('.deleteBtn');
+      const id = btn.getAttribute('data-id');
       if (confirm('Are you sure you want to delete this device?')) {
         try {
           const response = await fetch(`/api/devices/${id}`, { method: 'DELETE' });

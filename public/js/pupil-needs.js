@@ -106,7 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
           html += `
             <li>
               <span>${category.category_name}</span>
-              <button class="remove-cat-btn" data-id="${category.category_id}">Remove</button>
+              <button class="btn-danger remove-cat-btn" data-id="${category.category_id}">
+                <i class="fas fa-times"></i> Remove
+              </button>
             </li>
           `;
         });
@@ -202,7 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${override.is_added ? 'Added' : 'Removed'}</td>
             <td>${override.notes || ''}</td>
             <td>
-              <button class="deleteBtn" data-id="${override.override_id}">Remove Override</button>
+              <button class="btn-danger deleteBtn" data-id="${override.override_id}">
+                <i class="fas fa-times"></i> Remove Override
+              </button>
             </td>
           `;
           overridesTable.appendChild(tr);

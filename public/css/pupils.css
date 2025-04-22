@@ -1,78 +1,95 @@
-/* Base styling with Exhall Grange School colours */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
+/* Page-specific styling for pupils.html */
+
+/* Form row for side-by-side inputs */
+.form-row {
+  display: flex;
+  gap: 1rem;
 }
 
-header {
-  background-color: #003366;  /* Primary dark blue */
-  color: #ffffff;
-  padding: 20px;
-  text-align: center;
+.form-row .form-group {
+  flex: 1;
 }
 
-h1, h2 {
-  margin: 0 0 10px;
+/* File input container */
+.file-input-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
-main {
-  padding: 20px;
+.file-input-container input[type="file"] {
+  flex: 1;
 }
 
-section {
-  margin-bottom: 30px;
-  background-color: #ffffff;
-  padding: 15px;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+/* Pupil table specifics */
+#pupilTable th:first-child {
+  width: 50px;
 }
 
-form div {
-  margin-bottom: 10px;
-}
-
-label {
-  display: inline-block;
+#pupilTable th:nth-child(4) {
   width: 120px;
 }
 
-input[type="text"], input[type="number"], textarea {
-  width: calc(100% - 130px);
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+#pupilTable th:last-child {
+  width: 150px;
 }
 
-button {
-  background-color: #003366;
-  color: #ffffff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #002244;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid #ccc;
-}
-
-th, td {
-  padding: 10px;
-  text-align: left;
-}
-
+/* CSV upload message */
 #uploadMessage {
-  margin-top: 10px;
-  color: green;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: var(--button-radius);
+}
+
+#uploadMessage.success {
+  background-color: var(--muted-green);
+  color: darkgreen;
+}
+
+#uploadMessage.error {
+  background-color: var(--muted-red);
+  color: darkred;
+}
+
+/* Edit/delete action buttons */
+.action-button {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--button-radius);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.edit-btn {
+  background-color: var(--primary-blue);
+}
+
+.edit-btn:hover {
+  background-color: #3a4ba0;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .file-input-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

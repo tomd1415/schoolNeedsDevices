@@ -2,69 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pupil Management - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/pupils.css">
   <link rel="stylesheet" href="css/validation.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-  <header>
+  <header class="site-header">
+    <img
+      src="/img/Exhall-Grange-Nav-Logo-Sept-22.png"
+      alt="Exhall Grange Specialist School logo"
+      class="logo"
+    >
     <h1>Pupil Management</h1>
   </header>
   <nav>
     <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="pupils.html">Pupils</a></li>
-      <li><a href="forms.html">Forms</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="needs.html">Needs</a></li>
-      <li><a href="devices.html">Devices</a></li>
-      <li><a href="pupil-needs.html">Assign Needs</a></li>
-      <li><a href="need-devices.html">Assign Devices</a></li>
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="pupils.html" class="active"><i class="fas fa-user-graduate"></i> Pupils</a></li>
+      <li><a href="forms.html"><i class="fas fa-chalkboard"></i> Forms</a></li>
+      <li><a href="categories.html"><i class="fas fa-tags"></i> Categories</a></li>
+      <li><a href="needs.html"><i class="fas fa-list"></i> Needs</a></li>
+      <li><a href="devices.html"><i class="fas fa-laptop"></i> Devices</a></li>
+      <li><a href="pupil-needs.html"><i class="fas fa-link"></i> Assign Needs</a></li>
+      <li><a href="need-devices.html"><i class="fas fa-plug"></i> Assign Devices</a></li>
+      <li><a href="pupil-search.html"><i class="fas fa-search"></i> Pupil Search</a></li>
     </ul>
   </nav>
+  
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Pupil Management</h1>
+    </div>
+  </section>
+  
   <main>
     <!-- CSV Upload Section -->
-    <section id="csv-upload" class="form-section">
-      <h2>Upload Pupils CSV</h2>
+    <section id="csv-upload" class="form-section accent-yellow">
+      <h2><i class="fas fa-file-csv"></i> Upload Pupils CSV</h2>
       <form id="csvUploadForm" enctype="multipart/form-data">
-        <input type="file" name="csvfile" id="csvfile" accept=".csv">
-        <button type="submit">Upload CSV</button>
+        <div class="file-input-container">
+          <input type="file" name="csvfile" id="csvfile" accept=".csv">
+          <button type="submit"><i class="fas fa-upload"></i> Upload CSV</button>
+        </div>
       </form>
       <div id="uploadMessage"></div>
     </section>
 
     <!-- Add/Edit Pupil Section -->
-    <section id="pupil-form-section" class="form-section">
-      <h2>Add/Edit Pupil</h2>
+    <section id="pupil-form-section" class="form-section accent-green">
+      <h2><i class="fas fa-user-plus"></i> Add/Edit Pupil</h2>
       <form id="pupilForm">
         <input type="hidden" id="pupil_id" name="pupil_id" value="">
-        <div>
-          <label for="first_name">First Name:</label>
-          <input type="text" id="first_name" name="first_name" required>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+          </div>
+          <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+          </div>
         </div>
-        <div>
-          <label for="last_name">Last Name:</label>
-          <input type="text" id="last_name" name="last_name" required>
-        </div>
-        <div>
+        <div class="form-group">
           <label for="form_id">Form Group:</label>
           <select id="form_id" name="form_id" required>
             <option value="">Select a form</option>
             <!-- Options will be populated dynamically -->
           </select>
         </div>
-        <div>
+        <div class="form-group">
           <label for="notes">Notes:</label>
           <textarea id="notes" name="notes"></textarea>
         </div>
-        <button type="submit" id="savePupilBtn">Save Pupil</button>
+        <button type="submit" id="savePupilBtn"><i class="fas fa-save"></i> Save Pupil</button>
       </form>
     </section>
 
     <!-- List of Pupils -->
     <section id="pupil-list-section" class="list-section">
-      <h2>Pupil List</h2>
+      <h2><i class="fas fa-list"></i> Pupil List</h2>
       <table id="pupilTable">
         <thead>
           <tr>

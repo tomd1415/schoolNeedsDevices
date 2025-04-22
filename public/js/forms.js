@@ -17,8 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${form.teacher_name || ''}</td>
           <td>${form.form_description || ''}</td>
           <td>
-            <button class="editBtn" data-id="${form.form_id}">Edit</button>
-            <button class="deleteBtn" data-id="${form.form_id}">Delete</button>
+            <button class="btn-primary editBtn" data-id="${form.form_id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-danger deleteBtn" data-id="${form.form_id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
           </td>
         `;
         formTableBody.appendChild(tr);

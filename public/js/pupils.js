@@ -46,8 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${getFormNameById(pupil.form_id)}</td>
           <td>${pupil.notes || ''}</td>
           <td>
-            <button class="editBtn" data-id="${pupil.pupil_id}">Edit</button>
-            <button class="deleteBtn" data-id="${pupil.pupil_id}">Delete</button>
+            <button class="action-button edit-btn" data-id="${pupil.pupil_id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="action-button delete-btn" data-id="${pupil.pupil_id}">
+              <i class="fas fa-trash-alt"></i> Delete
+            </button>
           </td>
         `;
         pupilTableBody.appendChild(tr);
@@ -110,23 +114,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData();
     formData.append('csvfile', file);
     try {
+      uploadMessageDiv.textContent = "Uploading...";
+      uploadMessageDiv.className = "";
+      
       const response = await fetch('/api/pupils/upload', {
         method: 'POST',
         body: formData
       });
       const result = await response.json();
+      
       uploadMessageDiv.textContent = result.message || 'CSV upload successful';
+      uploadMessageDiv.className = 'success';
       loadPupils();
     } catch (error) {
       console.error('Error uploading CSV:', error);
-      uploadMessageDiv.textContent = 'Error uploading CSV';
+      uploadMessageDiv.textContent = 'Error uploading CSV: ' + error.message;
+      uploadMessageDiv.className = 'error';
     }
   });
 
   // Delegate events for edit and delete buttons in the pupil table
   pupilTableBody.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('editBtn')) {
-      const id = e.target.getAttribute('data-id');
+    // Use closest to handle clicks on the icon or the button
+    const editBtn = e.target.closest('.edit-btn');
+    const deleteBtn = e.target.closest('.delete-btn');
+    
+    if (editBtn) {
+      const id = editBtn.getAttribute('data-id');
       try {
         const response = await fetch('/api/pupils');
         const pupils = await response.json();
@@ -137,14 +151,17 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('last_name').value = pupil.last_name;
           document.getElementById('form_id').value = pupil.form_id;
           document.getElementById('notes').value = pupil.notes || '';
+          
+          // Scroll to the form section
+          document.getElementById('pupil-form-section').scrollIntoView({ behavior: 'smooth' });
         }
       } catch (error) {
         console.error('Error fetching pupil for editing:', error);
       }
     }
 
-    if (e.target.classList.contains('deleteBtn')) {
-      const id = e.target.getAttribute('data-id');
+    if (deleteBtn) {
+      const id = deleteBtn.getAttribute('data-id');
       if (confirm('Are you sure you want to delete this pupil?')) {
         try {
           const response = await fetch(`/api/pupils/${id}`, { method: 'DELETE' });

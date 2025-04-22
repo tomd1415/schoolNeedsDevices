@@ -2,53 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Category Management - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/validation.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-  <header>
+  <header class="site-header">
+    <img
+      src="/img/Exhall-Grange-Nav-Logo-Sept-22.png"
+      alt="Exhall Grange Specialist School logo"
+      class="logo"
+    >
     <h1>Category Management</h1>
   </header>
   <nav>
     <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="pupils.html">Pupils</a></li>
-      <li><a href="forms.html">Forms</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="needs.html">Needs</a></li>
-      <li><a href="devices.html">Devices</a></li>
-      <li><a href="pupil-needs.html">Assign Needs</a></li>
-      <li><a href="need-devices.html">Assign Devices</a></li>
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="pupils.html"><i class="fas fa-user-graduate"></i> Pupils</a></li>
+      <li><a href="forms.html"><i class="fas fa-chalkboard"></i> Forms</a></li>
+      <li><a href="categories.html" class="active"><i class="fas fa-tags"></i> Categories</a></li>
+      <li><a href="needs.html"><i class="fas fa-list"></i> Needs</a></li>
+      <li><a href="devices.html"><i class="fas fa-laptop"></i> Devices</a></li>
+      <li><a href="pupil-needs.html"><i class="fas fa-link"></i> Assign Needs</a></li>
+      <li><a href="need-devices.html"><i class="fas fa-plug"></i> Assign Devices</a></li>
+      <li><a href="pupil-search.html"><i class="fas fa-search"></i> Pupil Search</a></li>
     </ul>
   </nav>
+  
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Category Management</h1>
+    </div>
+  </section>
+  
   <main>
     <!-- Add/Edit Category Section -->
-    <section id="category-form-section" class="form-section">
-      <h2>Add/Edit Category</h2>
+    <section class="form-section accent-yellow">
+      <h2><i class="fas fa-plus-circle"></i> Add/Edit Category</h2>
       <form id="categoryForm">
         <input type="hidden" id="category_id" name="category_id" value="">
-        <div>
+        <div class="form-group">
           <label for="category_name">Category Name:</label>
           <input type="text" id="category_name" name="category_name" required>
         </div>
-        <div>
+        <div class="form-group">
           <label for="description">Description:</label>
           <textarea id="description" name="description"></textarea>
         </div>
-
-        <button type="submit" id="saveCategoryBtn">Save Category</button>
+        <button type="submit" id="saveCategoryBtn" class="btn-primary"><i class="fas fa-save"></i> Save Category</button>
       </form>
     </section>
 
     <!-- List of Categories -->
-    <section id="category-list-section" class="list-section">
-      <h2>Category List</h2>
-      <table id="categoryTable">
+    <section class="list-section">
+      <h2><i class="fas fa-list"></i> Category List</h2>
+      <table id="categoryTable" class="data-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Category Name</th>
+            <th>Name</th>
             <th>Description</th>
             <th>Actions</th>
           </tr>

@@ -121,7 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${formatDate(assignment.assignment_date)}</td>
             <td>${assignment.notes || ''}</td>
             <td>
-              <button class="deleteBtn" data-deviceid="${assignment.device_id}">Remove</button>
+              <button class="btn-danger deleteBtn" data-deviceid="${assignment.device_id}">
+                <i class="fas fa-trash"></i> Remove
+              </button>
             </td>
           `;
           assignedDevicesTableBody.appendChild(tr);

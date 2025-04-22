@@ -2,57 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Form Management - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/validation.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header>
+  <header class="site-header">
+    <img
+      src="/img/Exhall-Grange-Nav-Logo-Sept-22.png"
+      alt="Exhall Grange Specialist School logo"
+      class="logo"
+    >
     <h1>Form Group Management</h1>
   </header>
   <nav>
     <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="pupils.html">Pupils</a></li>
-      <li><a href="forms.html">Forms</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="needs.html">Needs</a></li>
-      <li><a href="devices.html">Devices</a></li>
-      <li><a href="pupil-needs.html">Assign Needs</a></li>
-      <li><a href="need-devices.html">Assign Devices</a></li>
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="pupils.html"><i class="fas fa-user-graduate"></i> Pupils</a></li>
+      <li><a href="forms.html" class="active"><i class="fas fa-chalkboard"></i> Forms</a></li>
+      <li><a href="categories.html"><i class="fas fa-tags"></i> Categories</a></li>
+      <li><a href="needs.html"><i class="fas fa-list"></i> Needs</a></li>
+      <li><a href="devices.html"><i class="fas fa-laptop"></i> Devices</a></li>
+      <li><a href="pupil-needs.html"><i class="fas fa-link"></i> Assign Needs</a></li>
+      <li><a href="need-devices.html"><i class="fas fa-plug"></i> Assign Devices</a></li>
+      <li><a href="pupil-search.html"><i class="fas fa-search"></i> Pupil Search</a></li>
     </ul>
   </nav>
+  
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Form Group Management</h1>
+    </div>
+  </section>
+  
   <main>
     <!-- Add/Edit Form Section -->
-    <section id="form-form-section" class="form-section">
-      <h2>Add/Edit Form Group</h2>
+    <section id="form-form-section" class="form-section accent-yellow">
+      <h2><i class="fas fa-chalkboard"></i> Add/Edit Form Group</h2>
       <form id="formForm">
         <input type="hidden" id="form_id" name="form_id" value="">
-        <div>
+        <div class="form-group">
           <label for="form_name">Form Name:</label>
           <input type="text" id="form_name" name="form_name" required>
         </div>
-        <div>
+        <div class="form-group">
           <label for="form_year">Form Year:</label>
           <input type="text" id="form_year" name="form_year" required>
         </div>
-
-        <div>
+        <div class="form-group">
           <label for="teacher_name">Teacher Name:</label>
           <input type="text" id="teacher_name" name="teacher_name">
         </div>
-        <div>
+        <div class="form-group">
           <label for="description">Description:</label>
           <textarea id="description" name="description"></textarea>
         </div>
-        <button type="submit" id="saveFormBtn">Save Form</button>
+        <button type="submit" id="saveFormBtn" class="btn-primary"><i class="fas fa-save"></i> Save Form</button>
       </form>
     </section>
 
     <!-- List of Forms -->
     <section id="form-list-section" class="list-section">
-      <h2>Form List</h2>
-      <table id="formTable">
+      <h2><i class="fas fa-list"></i> Form List</h2>
+      <table id="formTable" class="data-table">
         <thead>
           <tr>
             <th>ID</th>

@@ -51,9 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${need.short_description || ''}</td>
           <td>${need.description || ''}</td>
           <td>
-            <button class="editBtn" data-id="${need.need_id}">Edit</button>
-            <button class="deleteBtn" data-id="${need.need_id}">Delete</button>
-            <button class="categoriesBtn" data-id="${need.need_id}">Manage Categories</button>
+            <button class="action-button edit-btn" data-id="${need.need_id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="action-button delete-btn" data-id="${need.need_id}">
+              <i class="fas fa-trash-alt"></i> Delete
+            </button>
+            <button class="action-button categoriesBtn" data-id="${need.need_id}">
+              <i class="fas fa-tags"></i> Manage Categories
+            </button>
           </td>
         `;
         needTableBody.appendChild(tr);
@@ -129,9 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="close">&times;</span>
         <h2>Manage Categories for Need</h2>
         <div id="categoriesList"></div>
-        <div>
-          <select id="addCategorySelect"></select>
-          <button id="addCategoryBtn">Add Category</button>
+        <div class="form-group">
+          <select id="addCategorySelect" class="form-input"></select>
+          <button id="addCategoryBtn" class="action-button">
+            <i class="fas fa-plus"></i> Add Category
+          </button>
         </div>
       </div>
     `;
@@ -173,11 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
       categoriesList.innerHTML += '<p>No categories assigned yet</p>';
     } else {
       const ul = document.createElement('ul');
+      ul.className = 'item-list';
       needCategories.forEach(category => {
         const li = document.createElement('li');
         li.textContent = category.category_name;
         const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i> Remove';
+        removeBtn.className = 'action-button delete-btn';
         removeBtn.dataset.categoryId = category.category_id;
         removeBtn.addEventListener('click', async () => {
           await fetch(`/api/category-needs/${needId}/categories/${category.category_id}`, {
@@ -220,10 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.style.display = 'block';
   };
 
-  // Delegate events for buttons in the need table
+  // Delegate events for edit and delete buttons in the need table
   needTableBody.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('editBtn')) {
-      const id = e.target.getAttribute('data-id');
+    // Use closest to handle clicks on the icon or the button
+    const editBtn = e.target.closest('.edit-btn');
+    const deleteBtn = e.target.closest('.delete-btn');
+    
+    if (editBtn) {
+      const id = editBtn.getAttribute('data-id');
       try {
         const response = await fetch(`/api/needs/${id}`);
         const need = await response.json();
@@ -233,24 +247,28 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('category_id').value = need.category_id || '';
           document.getElementById('need_short_desc').value = need.short_description || '';
           document.getElementById('need_long_desc').value = need.description || '';
+          
+          // Scroll to the form section
+          document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
         }
       } catch (error) {
         console.error('Error fetching need for editing:', error);
       }
     }
 
-    if (e.target.classList.contains('deleteBtn')) {
-      const id = e.target.getAttribute('data-id');
+    if (deleteBtn) {
+      const id = deleteBtn.getAttribute('data-id');
       if (confirm('Are you sure you want to delete this need?')) {
         try {
           const response = await fetch(`/api/needs/${id}`, { method: 'DELETE' });
           if (response.ok) {
             loadNeeds();
           } else {
-            console.error('Error deleting need');
+            alert('Error deleting need. It may be in use by categories or pupils.');
           }
         } catch (error) {
           console.error('Error deleting need:', error);
+          alert('Error deleting need: ' + error.message);
         }
       }
     }

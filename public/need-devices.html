@@ -2,31 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Assign Devices to Needs - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/validation.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header>
+  <header class="site-header">
+    <img
+      src="/img/Exhall-Grange-Nav-Logo-Sept-22.png"
+      alt="Exhall Grange Specialist School logo"
+      class="logo"
+    >
     <h1>Assign Devices to Needs</h1>
   </header>
   <nav>
     <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="pupils.html">Pupils</a></li>
-      <li><a href="forms.html">Forms</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="needs.html">Needs</a></li>
-      <li><a href="devices.html">Devices</a></li>
-      <li><a href="pupil-needs.html">Assign Needs</a></li>
-      <li><a href="need-devices.html">Assign Devices</a></li>
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="pupils.html"><i class="fas fa-user-graduate"></i> Pupils</a></li>
+      <li><a href="forms.html"><i class="fas fa-chalkboard"></i> Forms</a></li>
+      <li><a href="categories.html"><i class="fas fa-tags"></i> Categories</a></li>
+      <li><a href="needs.html"><i class="fas fa-list"></i> Needs</a></li>
+      <li><a href="devices.html"><i class="fas fa-laptop"></i> Devices</a></li>
+      <li><a href="pupil-needs.html"><i class="fas fa-link"></i> Assign Needs</a></li>
+      <li><a href="need-devices.html" class="active"><i class="fas fa-plug"></i> Assign Devices</a></li>
+      <li><a href="pupil-search.html"><i class="fas fa-search"></i> Pupil Search</a></li>
     </ul>
   </nav>
+  
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Assign Devices to Needs</h1>
+    </div>
+  </section>
+  
   <main>
     <!-- Select Pupil Section -->
-    <section id="select-pupil-section" class="form-section">
-      <h2>Select Pupil</h2>
-      <div>
+    <section id="select-pupil-section" class="form-section accent-yellow">
+      <h2><i class="fas fa-user-graduate"></i> Select Pupil</h2>
+      <div class="form-group">
         <label for="pupil_id">Pupil:</label>
         <select id="pupil_id" name="pupil_id">
           <option value="">Select a pupil</option>
@@ -36,9 +51,9 @@
     </section>
 
     <!-- Select Need Section -->
-    <section id="select-need-section" class="form-section" style="display: none;">
-      <h2>Select Need</h2>
-      <div>
+    <section id="select-need-section" class="form-section accent-green" style="display: none;">
+      <h2><i class="fas fa-list"></i> Select Need</h2>
+      <div class="form-group">
         <label for="need_id">Need:</label>
         <select id="need_id" name="need_id">
           <option value="">Select a need</option>
@@ -53,32 +68,32 @@
     </section>
 
     <!-- Assign Device Section -->
-    <section id="assign-device-section" class="form-section" style="display: none;">
-      <h2>Assign Device</h2>
+    <section id="assign-device-section" class="form-section accent-blue" style="display: none;">
+      <h2><i class="fas fa-laptop"></i> Assign Device</h2>
       <form id="assignDeviceForm">
-        <div>
+        <div class="form-group">
           <label for="device_id">Device:</label>
           <select id="device_id" name="device_id" required>
             <option value="">Select a device</option>
             <!-- Options will be populated dynamically -->
           </select>
         </div>
-        <div>
+        <div class="form-group">
           <label for="assignment_date">Assignment Date:</label>
           <input type="date" id="assignment_date" name="assignment_date" required>
         </div>
-        <div>
+        <div class="form-group">
           <label for="notes">Notes:</label>
           <textarea id="notes" name="notes"></textarea>
         </div>
-        <button type="submit" id="assignDeviceBtn">Assign Device</button>
+        <button type="submit" id="assignDeviceBtn" class="btn-primary"><i class="fas fa-plus"></i> Assign Device</button>
       </form>
     </section>
 
     <!-- Assigned Devices Section -->
     <section id="assigned-devices-section" class="list-section" style="display: none;">
-      <h2>Assigned Devices</h2>
-      <table id="assignedDevicesTable">
+      <h2><i class="fas fa-plug"></i> Assigned Devices</h2>
+      <table id="assignedDevicesTable" class="data-table">
         <thead>
           <tr>
             <th>Device Name</th>

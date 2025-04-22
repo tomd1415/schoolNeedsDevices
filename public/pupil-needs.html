@@ -2,31 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Manage Pupil Needs - Exhall Grange School</title>
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/validation.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header>
+  <header class="site-header">
+    <img
+      src="/img/Exhall-Grange-Nav-Logo-Sept-22.png"
+      alt="Exhall Grange Specialist School logo"
+      class="logo"
+    >
     <h1>Manage Pupil Needs</h1>
   </header>
   <nav>
     <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="pupils.html">Pupils</a></li>
-      <li><a href="forms.html">Forms</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="needs.html">Needs</a></li>
-      <li><a href="devices.html">Devices</a></li>
-      <li><a href="pupil-needs.html">Assign Needs</a></li>
-      <li><a href="need-devices.html">Assign Devices</a></li>
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="pupils.html"><i class="fas fa-user-graduate"></i> Pupils</a></li>
+      <li><a href="forms.html"><i class="fas fa-chalkboard"></i> Forms</a></li>
+      <li><a href="categories.html"><i class="fas fa-tags"></i> Categories</a></li>
+      <li><a href="needs.html"><i class="fas fa-list"></i> Needs</a></li>
+      <li><a href="devices.html"><i class="fas fa-laptop"></i> Devices</a></li>
+      <li><a href="pupil-needs.html" class="active"><i class="fas fa-link"></i> Assign Needs</a></li>
+      <li><a href="need-devices.html"><i class="fas fa-plug"></i> Assign Devices</a></li>
+      <li><a href="pupil-search.html"><i class="fas fa-search"></i> Pupil Search</a></li>
     </ul>
   </nav>
+  
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Manage Pupil Needs</h1>
+    </div>
+  </section>
+  
   <main>
     <!-- Select Pupil Section -->
-    <section id="select-pupil-section" class="form-section">
-      <h2>Select Pupil</h2>
-      <div>
+    <section id="select-pupil-section" class="form-section accent-yellow">
+      <h2><i class="fas fa-user-graduate"></i> Select Pupil</h2>
+      <div class="form-group">
         <label for="pupil_id">Pupil:</label>
         <select id="pupil_id" name="pupil_id">
           <option value="">Select a pupil</option>
@@ -36,16 +51,16 @@
     </section>
 
     <!-- Pupil Info Section -->
-    <section id="pupil-info" class="form-section" style="display: none;">
-      <h2>Pupil Information</h2>
+    <section id="pupil-info" class="form-section accent-green" style="display: none;">
+      <h2><i class="fas fa-info-circle"></i> Pupil Information</h2>
       <p><strong>Name:</strong> <span id="pupil-name"></span></p>
       <p><strong>Form:</strong> <span id="pupil-form"></span></p>
       <p><strong>Notes:</strong> <span id="pupil-notes"></span></p>
     </section>
 
     <!-- Assign Categories Section -->
-    <section id="assign-category-section" class="form-section" style="display: none;">
-      <h2>Manage Categories</h2>
+    <section id="assign-category-section" class="form-section accent-blue" style="display: none;">
+      <h2><i class="fas fa-tags"></i> Manage Categories</h2>
       <div class="tabs">
         <button class="tab-btn active" data-tab="assigned-categories">Assigned Categories</button>
         <button class="tab-btn" data-tab="assign-category">Assign New Category</button>
@@ -62,21 +77,21 @@
       <div id="assign-category" class="tab-content" style="display: none;">
         <h3>Assign New Category</h3>
         <form id="assignCategoryForm">
-          <div>
+          <div class="form-group">
             <label for="category_id">Category:</label>
             <select id="category_id" name="category_id" required>
               <option value="">Select a category</option>
               <!-- Options will be populated dynamically -->
             </select>
           </div>
-          <button type="submit" id="assignCategoryBtn">Assign Category</button>
+          <button type="submit" id="assignCategoryBtn" class="btn-primary"><i class="fas fa-plus"></i> Assign Category</button>
         </form>
       </div>
     </section>
 
     <!-- Needs Overview Section -->
     <section id="needs-overview-section" class="list-section" style="display: none;">
-      <h2>Needs Overview</h2>
+      <h2><i class="fas fa-list"></i> Needs Overview</h2>
       <div class="tabs">
         <button class="tab-btn active" data-tab="effective-needs">Effective Needs</button>
         <button class="tab-btn" data-tab="need-overrides">Manage Overrides</button>
@@ -85,7 +100,7 @@
       <div id="effective-needs" class="tab-content">
         <h3>Effective Needs</h3>
         <p class="hint">These are all the needs assigned to this pupil based on their categories and individual overrides.</p>
-        <table id="effectiveNeedsTable">
+        <table id="effectiveNeedsTable" class="data-table">
           <thead>
             <tr>
               <th>Need</th>
@@ -108,43 +123,43 @@
           <div>
             <h4>Add Individual Need</h4>
             <form id="addNeedForm">
-              <div>
+              <div class="form-group">
                 <label for="add_need_id">Need to Add:</label>
                 <select id="add_need_id" name="need_id" required>
                   <option value="">Select a need</option>
                   <!-- Options populated dynamically -->
                 </select>
               </div>
-              <div>
+              <div class="form-group">
                 <label for="add_notes">Notes:</label>
                 <textarea id="add_notes" name="notes"></textarea>
               </div>
-              <button type="submit">Add Need</button>
+              <button type="submit" class="btn-primary"><i class="fas fa-plus"></i> Add Need</button>
             </form>
           </div>
 
           <div>
             <h4>Remove Category Need</h4>
             <form id="removeNeedForm">
-              <div>
+              <div class="form-group">
                 <label for="remove_need_id">Need to Remove:</label>
                 <select id="remove_need_id" name="need_id" required>
                   <option value="">Select a need</option>
                   <!-- Options populated dynamically -->
                 </select>
               </div>
-              <div>
+              <div class="form-group">
                 <label for="remove_notes">Reason for removal:</label>
                 <textarea id="remove_notes" name="notes"></textarea>
               </div>
-              <button type="submit">Remove Need</button>
+              <button type="submit" class="btn-danger"><i class="fas fa-minus"></i> Remove Need</button>
             </form>
           </div>
         </div>
 
         <div class="current-overrides">
           <h4>Current Overrides</h4>
-          <table id="overridesTable">
+          <table id="overridesTable" class="data-table">
             <thead>
               <tr>
                 <th>Need</th>

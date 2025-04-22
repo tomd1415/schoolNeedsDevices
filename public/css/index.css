@@ -190,7 +190,7 @@ a {
 .center-card {
   top: 50%;
   left: 50%;
-  z-index: 0;                            /* behind the ring cards */
+  z-index: 1;                            /* slightly above background but behind ring cards */
   width: calc(var(--card-size) * var(--center-card-scale));
   height: calc(var(--card-size) * var(--center-card-scale));
   transform: translate(-50%, -50%);
@@ -215,5 +215,59 @@ a {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(0.5rem); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card Link Styles */
+.card-link {
+  position: absolute;
+  top: 50%; left: 50%;
+  text-decoration: none;
+  color: inherit;
+  z-index: 100;
+}
+
+.card-link:hover {
+  text-decoration: none;
+}
+
+.card-link .card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.card-link i {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-blue);
+}
+
+.card-link .center-card i {
+  font-size: 2.2rem;
+  margin-bottom: 0.7rem;
+}
+
+.card-link span {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Center card specific link styles */
+.card-link:last-child {
+  width: calc(var(--card-size) * var(--center-card-scale));
+  height: calc(var(--card-size) * var(--center-card-scale));
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+}
+
+.card-link .center-card {
+  position: static;
+  width: 100%;
+  height: 100%;
+  transform: none;
 }
 
