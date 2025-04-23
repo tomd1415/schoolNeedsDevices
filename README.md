@@ -40,13 +40,15 @@ The project has a full-stack implementation with the following components:
 - Database view for effective pupil needs calculation
 
 ### Frontend
-- Clean, responsive interface with navigation
+- Clean, responsive interface with navigation and consistent styling
+- Interactive landing page with card-based navigation
 - Pages for managing entities and relationships
 - Forms for creating and editing records
 - Modal dialogs for managing relationships
 - Advanced pupil search with autocomplete functionality
 - Print-optimized pupil profile view for A4 portrait paper
 - Modular JavaScript architecture for the pupil search and profile features
+- Enhanced UI with icons, gradients, and visual feedback for user actions
 
 ## Implemented Features
 
@@ -68,6 +70,9 @@ The project has a full-stack implementation with the following components:
 - ✅ Ability to assign/unassign devices from the profile page
 - ✅ Client and server-side validation for duplicate category assignments
 - ✅ Proper removal of needs via the override system
+- ✅ Consistent UI styling across all pages
+- ✅ Intuitive navigation with visual feedback
+- ✅ Responsive design for various screen sizes
 
 ## Recently Resolved Issues
 
@@ -85,12 +90,20 @@ The project has a full-stack implementation with the following components:
 - ✅ Fixed issue with effective needs calculation to properly exclude removed needs
 - ✅ Implemented proper client and server-side validation for pupil-category assignments
 - ✅ Updated database queries to use the effective_pupil_needs view consistently
+- ✅ Fixed UI inconsistencies in the landing page and pupil search page
+- ✅ Enhanced the landing page with fully clickable cards and consistent icons
+- ✅ Added hero sections to all pages for consistent styling
+- ✅ Fixed background styling for the pupil search card
+- ✅ Corrected button styling inconsistencies across the application
+- ✅ Fixed center card positioning in the landing page's circular menu
 
 ## Remaining Issues
 
 - ❌ Update functionality for some entities not fully implemented
 - ❌ create_db.sql file needs updating to match the current schema_dump.sql
 - ❌ Some inconsistencies in handling need descriptions (short vs. long)
+- ❌ Need for more comprehensive input validation
+- ❌ Error feedback to users could be improved
 
 ## Project Structure
 
@@ -99,6 +112,7 @@ The project has a full-stack implementation with the following components:
 ├── public/                     # Frontend files
 │   ├── css/                    # Stylesheets
 │   │   ├── common.css          # Shared styles
+│   │   ├── index.css           # Landing page styles
 │   │   ├── pupil-search.css    # Styles for pupil search
 │   │   ├── validation.css      # Form validation styles
 │   │   └── ...                 # Other stylesheets
@@ -109,11 +123,16 @@ The project has a full-stack implementation with the following components:
 │   │   │   ├── category-manager.js # Category management
 │   │   │   ├── device-manager.js   # Device management
 │   │   │   ├── override-manager.js # Override management
+│   │   │   ├── needs-override-manager.js # Need override specific logic
 │   │   │   ├── ui.js           # UI interactions
 │   │   │   ├── modal-utils.js  # Modal dialog utilities
 │   │   │   └── main.js         # Entry point
 │   │   ├── validation/         # Form validation scripts
 │   │   └── ...                 # Other JS files for each page
+│   ├── img/                    # Image assets
+│   │   ├── main-bg.png         # Main background image
+│   │   ├── hero-bg.png         # Hero section background
+│   │   └── ...                 # Other images
 │   └── *.html                  # HTML pages
 └── server/                     # Backend files
     ├── config/                 # Database configuration
@@ -125,6 +144,7 @@ The project has a full-stack implementation with the following components:
     │   ├── pupilController.js        # Pupil management
     │   ├── pupilCategoryController.js # Pupil-category relationships
     │   ├── pupilProfileController.js  # Comprehensive pupil profiles
+    │   ├── pupilNeedOverrideController.js # Need override management
     │   └── ...                       # Other controllers
     ├── models/                 # Data models
     ├── routes/                 # API routes
@@ -136,15 +156,16 @@ The project has a full-stack implementation with the following components:
 
 The database uses a relational structure with the following key tables:
 
+- `form`: Stores form/class information
+- `pupil`: Stores pupil information
 - `category`: Stores categories of needs
 - `need`: Stores individual needs
+- `device`: Stores device information
 - `category_need`: Junction table for many-to-many relationship between categories and needs
-- `pupil`: Stores pupil information
 - `pupil_category`: Junction table linking pupils to categories
 - `pupil_need_override`: Stores overrides that add or remove specific needs for pupils
-- `device`: Stores device information
 - `need_device`: Junction table linking needs to their associated devices
-- `form`: Stores form/class information
+- `pupil_device_alter`: Tracks changes to pupil-device assignments
 - `effective_pupil_needs`: View that calculates a pupil's effective needs based on their categories and overrides
 
 ## Key Workflows
@@ -181,6 +202,8 @@ The database uses a relational structure with the following key tables:
 5. Add user authentication and authorization
 6. Implement audit trails for tracking changes
 7. Add data visualization for needs and device distribution
+8. Improve mobile responsiveness for tablet and phone use
+9. Add dark mode support
 
 ## Usage
 
@@ -190,3 +213,15 @@ The database uses a relational structure with the following key tables:
 4. Set up the database schema using the latest schema_dump.sql file
 5. Start the server with `node index.js` from the server directory
 6. Access the application at http://localhost:5000
+
+## Screenshots
+
+(Future enhancement: Add screenshots showcasing the key interfaces of the application)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the terms of the license included in the repository.
